@@ -1,0 +1,50 @@
+version: '2'
+
+networks:
+  kafka-net:
+    driver: bridge
+
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:3'
+    networks:
+      - kafka-net
+    ports: 
+      - '2181:2181'
+    volumes: 
+      - 'zookeeper_data:/bitnami'
+    environment: 
+      - ALLOW_ANONYMOUS_LOGIN=yes  
+  
+  kafka:
+    image: 'bitnami/kafka:2'
+    networks:
+      - kafka-net
+    ports: 
+      - '9092:9092'
+    volumes: 
+      - 'kafka_data:/bitnami'
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper  
+  
+  kafka-manager:
+    networks:
+      - kafka-net
+    image: hlebalbau/kafka-manager:stable
+    ports:
+      - "9099:9000"
+    environment:
+      ZK_HOSTS: "zookeeper:2181"
+      APPLICATION_SECRET: "random-secret"
+      JMX_PORT: "9098"  #Controllare porta
+    command: -Dpidfile.path=/dev/null  
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
+    
