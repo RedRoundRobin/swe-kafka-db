@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  timescale:
+    container_name: timescale_db
+    build: ./Timescale
+    network_mode: host
+  postgre:
+    container_name: postgre_db
+    build: ./Postgres

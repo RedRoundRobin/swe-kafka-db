@@ -1,3 +1,4 @@
+# docker build -t postgreDatabase .
 FROM postgres
 COPY init.sql /docker-entrypoint-initdb.d/init.sql
 
