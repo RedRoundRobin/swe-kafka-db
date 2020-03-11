@@ -1,0 +1,1 @@
+CREATE TABLE prova(Ciao char(10));
