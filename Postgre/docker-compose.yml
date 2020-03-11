@@ -3,12 +3,13 @@ services:
   database:
     container_name: postgres-container
     ports:
-      - "5432:5432"
+      - "5432:5432" 
     image: "postgres" # use latest official postgres version
     env_file:
       - database.env # configure postgres
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: bash -c "psql --host=database --username=user --dbname=rainbow_database -a -f docker-entrypoint-initdb.d/init.sql"
 
 
     
