@@ -5,6 +5,10 @@ services:
     container_name: timescale_db
     build: ./Timescale
     network_mode: host
-  postgre:
+    ports:
+      - "3456:3456"
+  gateway:
     container_name: postgre_db
     build: ./Postgres
+    ports:
+      - "6543:6543"
