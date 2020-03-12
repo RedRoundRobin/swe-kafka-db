@@ -1,99 +1,85 @@
---PostgreSQL 9.6
---'\\' is a delimiter
+-- noinspection SqlNoDataSourceInspectionForFile
 
---select version() as postgresql_version
+-- PostgreSQL 9.6
+-- '\\' is a delimiter
 
-CREATE TABLE IF NOT EXISTS entity(
-  id_entity integer not null,
-  name varchar(30), 
-  location varchar(30) not null,
-  deleted boolean not null,
-  primary key(id_entity)
+-- select version() as postgresql_version
+
+CREATE TABLE IF NOT EXISTS entities (
+  id_entity integer PRIMARY KEY,
+  name varchar(32) NOT NULL, 
+  location varchar(32) NOT NULL,
+  deleted boolean NOT NULL DEFAULT false
 );
 
-CREATE TABLE IF NOT EXISTS _user(
-  id_user integer,
-  name varchar(30),
-  surname varchar(30), 
-  email varchar(30) not null,
-  password varchar(12) not null, --credo non vada salvata in chiaro(hash)
-  type smallint not null,
-  telegram_name varchar(30),
-  telegram_chat integer,
-  two_factor_authentication Boolean default false, --trigger: se true => i campi telegram != null (?)
-  deleted boolean not null,
-  id_entity integer not null,
-  primary key(id_user),
-  foreign key(id_user) references entity(id_entity) 
+CREATE TABLE IF NOT EXISTS users (
+  id_user integer PRIMARY KEY,
+  name varchar(32) NOT NULL,
+  surname varchar(32) NOT NULL,
+  email varchar(32) NOT NULL,
+  password varchar(256) NOT NULL,
+  type smallint NOT NULL,
+  telegram_name varchar(32),
+  telegram_chat varchar(32),
+  two_factor_authentication boolean DEFAULT false,
+  deleted boolean NOT NULL DEFAULT false,
+  id_entity integer,
+  CONSTRAINT fk_entity FOREIGN KEY (id_entity) REFERENCES entities (id_entity) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS gateways (
+  id_gateway integer PRIMARY KEY,
+  name varchar(32) NOT NULL
+);
 
-CREATE TABLE IF NOT EXISTS gateway(
+CREATE TABLE IF NOT EXISTS devices (
+  id_device integer PRIMARY KEY,
+  name varchar(32) NOT NULL,
+  frequency integer NOT NULL,
   id_gateway integer,
-  name varchar(30), 
-  primary key (id_gateway)
+  CONSTRAINT fk_gateway FOREIGN KEY (id_gateway) REFERENCES gateways (id_gateway) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-
-CREATE TABLE IF NOT EXISTS device(
+CREATE TABLE IF NOT EXISTS sensors (
+  id_sensor integer PRIMARY KEY,
+  type varchar(32) NOT NULL,
+  id_device_sensor integer NOT NULL,
   id_device integer,
-  id_gateway integer,
-  name varchar(30), 
-  frequency integer not null,
-  primary key(id_device),
-  foreign key(id_gateway) references gateway(id_gateway)
+  UNIQUE (id_device, id_device_sensor),
+  CONSTRAINT fk_device FOREIGN KEY (id_device) REFERENCES devices (id_device) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-
-CREATE TABLE IF NOT EXISTS sensor(
+CREATE TABLE IF NOT EXISTS alerts (
+  id_alert integer PRIMARY KEY,
+  threshold real,
+  type smallint NOT NULL,
+  deleted boolean NOT NULL DEFAULT false,
   id_sensor integer,
-  id_device integer, 
-  type varchar(30),
-  primary key(id_sensor, id_device),
-  foreign key(id_device) references device(id_device)
+  id_entity integer,
+  CONSTRAINT fk_sensor FOREIGN KEY (id_sensor) REFERENCES sensors (id_sensor) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT fk_entity FOREIGN KEY (id_entity) REFERENCES entities (id_entity) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-
-CREATE TABLE IF NOT EXISTS alert(
-  id_alert integer,
-  threshold float,
-  type smallint,
-  deleted Boolean not null default false,
-  id_device integer,
-  id_sensor integer,
-  id_entity integer, 
-  primary key(id_alert),
-  foreign key(id_sensor, id_device) references sensor(id_sensor, id_device),
-  foreign key(id_entity) references entity(id_entity)
+CREATE TABLE IF NOT EXISTS views (
+  id_view integer PRIMARY KEY,
+  name varchar(32) NOT NULL
 );
 
-
-CREATE TABLE IF NOT EXISTS view(
+CREATE TABLE IF NOT EXISTS views_graphs (
+  id_graph integer PRIMARY KEY,
+  correlation smallint NOT NULL,
   id_view integer,
-  name varchar(30), 
-  primary key(id_view)
+  id_sensor_1 integer,
+  id_sensor_2 integer,
+  CONSTRAINT fk_view FOREIGN KEY (id_view) REFERENCES views (id_view) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT fk_sensor1 FOREIGN KEY (id_sensor_1) REFERENCES sensors (id_sensor) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT fk_sensor2 FOREIGN KEY (id_sensor_2) REFERENCES sensors (id_sensor) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-
-CREATE TABLE IF NOT EXISTS view_graph(
-  id_graph integer,
-  correlation smallint, 
-  id_view integer,
-  id_sensor_1 integer not null,
-  id_device_1 integer not null,
-  id_sensor_2 integer not null,
-  id_device_2 integer not null,
-  primary key(id_graph),
-  foreign key(id_view) references view(id_view),
-  foreign key(id_sensor_1, id_device_1) references sensor(id_sensor, id_device),
-  foreign key(id_sensor_2, id_device_2) references sensor(id_sensor, id_device)
-);
-
-
-CREATE TABLE IF NOT EXISTS user_alert(
+CREATE TABLE IF NOT EXISTS disabled_users_alerts (
   id_user integer,
   id_alert integer,
-  primary key(id_user, id_alert),
-  foreign key(id_user) references _user(id_user),
-  foreign key(id_alert) references alert(id_alert) 
+  PRIMARY KEY (id_user, id_alert),
+  CONSTRAINT fk_user FOREIGN KEY (id_user) REFERENCES users (id_user) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT fk_alert FOREIGN KEY (id_alert) REFERENCES alerts (id_alert) ON DELETE SET NULL ON UPDATE CASCADE
 );
