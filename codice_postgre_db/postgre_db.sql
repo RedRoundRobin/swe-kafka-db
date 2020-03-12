@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS view_graph(
   id_device_1 integer not null,
   id_sensor_2 integer not null,
   id_device_2 integer not null,
+  primary key(id_graph),
   foreign key(id_view) references view(id_view),
   foreign key(id_sensor_1, id_device_1) references sensor(id_sensor, id_device),
   foreign key(id_sensor_2, id_device_2) references sensor(id_sensor, id_device)
