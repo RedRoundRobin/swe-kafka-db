@@ -4,4 +4,4 @@ COPY init.sql /docker-entrypoint-initdb.d/init.sql
 
 ENV POSTGRES_USER=user
 ENV POSTGRES_PASSWORD=user
-ENV POSTGRES_DB=sasso_database
+ENV POSTGRES_DB=timescale
