@@ -1,4 +1,4 @@
-
 .DS_Store
-
-kafka/database-adapter/.idea/
+.idea
+*.iml
+out/

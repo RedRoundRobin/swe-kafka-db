@@ -6,9 +6,13 @@ import java.sql.Time;
 public class TimescaleAdapter {
 
     private Database database;
+    private Consumer consumer;
 
-    TimescaleAdapter(Database db) {
 
+
+    TimescaleAdapter(Database db, Consumer cons) {
+        database = db;
+        consumer = cons;
     }
 
     public static void main(String[] args){
