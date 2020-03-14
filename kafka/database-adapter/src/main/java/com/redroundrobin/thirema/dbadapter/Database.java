@@ -44,11 +44,12 @@ public class Database {
                 JsonObject record = (JsonObject) it.next();
                 for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
                     JsonObject sensor = jsonSensor.getAsJsonObject();
-                    String insert = "INSERT INTO sensors (sensor_id, device_id, value, time) VALUES ("+
+                    String insert = "INSERT INTO sensors (time, sensor_id, device_id, value) VALUES ("+
+                            "CURRENT_TIMESTAMP"+
                             sensor.get("sensorId").getAsInt()+","+
                             record.get("deviceId").getAsInt()+","+
                             sensor.get("data").getAsDouble()+"," +
-                            "CURRENT_TIMESTAMP);";
+                            ");";
                     stat.executeUpdate(insert);
                 }
             }

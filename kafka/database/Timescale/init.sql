@@ -6,22 +6,27 @@
 -- select version() as postgresql_version
 
 CREATE TABLE IF NOT EXISTS sensors (
-  sensor_id integer NOT NULL,
-  device_id integer NOT NULL,
-  value double precision,
-  time timestamp NOT NULL
+    time timestamptz NOT NULL,
+    sensor_id integer NOT NULL,
+    device_id integer NOT NULL,
+    value double precision NULL,
+    PRIMARY KEY (time, sensor_id)
 );
 
 CREATE TABLE IF NOT EXISTS alerts (
-  sensor_id integer NOT NULL,
-  device_id integer NOT NULL,
-  value double precision,
-  time timestamp NOT NULL
+    time timestamptz NOT NULL,
+    sensor_id integer NOT NULL,
+    device_id integer NOT NULL,
+    value double precision NOT NULL,
+    PRIMARY KEY (time, sensor_id)
 );
 
 CREATE TABLE IF NOT EXISTS logs (
-    log_id integer NOT NULL,
-    time timestamp NOT NULL
+    time timestamptz NOT NULL,
+    user_id integer NOT NULL,
+    operation text NOT NULL,
+    data text NULL,
+    PRIMARY KEY (time, user_id)
 );
 
 SELECT create_hypertable('sensors', 'time');
