@@ -5,14 +5,13 @@ import java.sql.Time;
 
 public class TimescaleAdapter {
 
-  
+    private Database database;
+
     TimescaleAdapter(Database db) {
 
     }
 
     public static void main(String[] args){
-        TimescaleAdapter adapter = new TimescaleAdapter();
-        adapter.openConnection("jdbc:postgresql://localhost:3456/timescale", "user", "user");
 
     }
 }
