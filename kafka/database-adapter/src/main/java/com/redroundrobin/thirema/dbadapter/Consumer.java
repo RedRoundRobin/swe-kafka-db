@@ -39,7 +39,7 @@ public class Consumer {
         consumer.close();
     }
 
-    public List<JsonObject> fetchMessage() {
+    public List<JsonObject> fetchMessages() {
         System.out.println("[Consumer] Started");
 
         List<JsonObject> devicesData = new ArrayList<>();

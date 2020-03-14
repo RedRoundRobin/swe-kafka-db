@@ -1,5 +1,7 @@
 package com.redroundrobin.thirema.dbadapter;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.sql.*;
@@ -18,7 +20,7 @@ public class Database {
         this.password = password;
     }
 
-    Connection openConnection() {   //RICORDARSI DI CHIUDERE LA CONNESSIONE
+    public Connection openConnection() {   //RICORDARSI DI CHIUDERE LA CONNESSIONE
         Connection c = null;
         try {
             Class.forName("org.postgresql.Driver");
@@ -33,30 +35,35 @@ public class Database {
         return c;
     }
 
-    void sinkData(Connection c, List<JsonObject> data) {
+    public void sinkData(Connection c, List<JsonObject> data) {
         Statement stat = null;
         try{
             stat = c.createStatement();
             Iterator it = data.iterator();
             while(it.hasNext()) {
                 JsonObject record = (JsonObject) it.next();
-                String insert = "INSERT INTO sensors (sensor_id, device_id, value, time)" + "VALUES ("+
-                        record.get("sensorId").getAsInt()+
-                        record.get("deviceId").getAsInt()+
-                        record.get("data").getAsInt()+
-                        record.get("timestamp").getAsLong()+
-                        ")";
-                stat.executeUpdate(insert);
+                for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
+                    JsonObject sensor = jsonSensor.getAsJsonObject();
+                    String insert = String.format("INSERT INTO sensors (sensor_id, device_id, value, time) VALUES (%d, %d, %f, %b)",
+                            sensor.get("sensorId").getAsInt(),
+                            record.get("deviceId").getAsInt(),
+                            sensor.get("data").getAsDouble(),
+                            System.currentTimeMillis()
+                    );
+                    stat.executeUpdate(insert);
+                }
             }
+
             stat.close();
             c.commit();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println("Records created successfully");8)
     }
 
-    List<JsonObject> getData(Connection c) {
+    public List<JsonObject> getData(Connection c) {
         Statement stat = null;
         List<JsonObject> records = new ArrayList<>();
         try {
@@ -67,13 +74,24 @@ public class Database {
                 int deviceId = rs.getInt("device_id");
                 double value  = rs.getDouble("value");
                 long timestamp = rs.getLong("time");
-                JsonObject record = new JsonObject();
+                //Deve essere ricorstruito il dato
             }
             rs.close();
             stat.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        Database db = new Database("jdbc:postgresql://localhost:3456/timescale", "user", "user");
+        Consumer consumer = new Consumer(new String[]{"US-GATEWAY-1"}, "localhost:29092");
+        Connection conn = db.openConnection();
+        while(true){
+            List<JsonObject> records = consumer.fetchMessages();
+            db.sinkData(conn, records);
         }
     }
 }
