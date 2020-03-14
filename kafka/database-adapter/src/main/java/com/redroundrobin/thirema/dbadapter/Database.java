@@ -44,12 +44,11 @@ public class Database {
                 JsonObject record = (JsonObject) it.next();
                 for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
                     JsonObject sensor = jsonSensor.getAsJsonObject();
-                    String insert = String.format("INSERT INTO sensors (sensor_id, device_id, value, time) VALUES (%d, %d, %f, %b)",
-                            sensor.get("sensorId").getAsInt(),
-                            record.get("deviceId").getAsInt(),
-                            sensor.get("data").getAsDouble(),
-                            System.currentTimeMillis()
-                    );
+                    String insert = "INSERT INTO sensors (sensor_id, device_id, value, time) VALUES ("+
+                            sensor.get("sensorId").getAsInt()+","+
+                            record.get("deviceId").getAsInt()+","+
+                            sensor.get("data").getAsDouble()+"," +
+                            "CURRENT_TIMESTAMP);";
                     stat.executeUpdate(insert);
                 }
             }
@@ -60,7 +59,7 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("Records created successfully");8)
+        System.out.println("Records created successfully");
     }
 
     public List<JsonObject> getData(Connection c) {
@@ -85,13 +84,15 @@ public class Database {
         return null;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Database db = new Database("jdbc:postgresql://localhost:3456/timescale", "user", "user");
         Consumer consumer = new Consumer(new String[]{"US-GATEWAY-1"}, "localhost:29092");
         Connection conn = db.openConnection();
+        conn.setAutoCommit(false);
         while(true){
             List<JsonObject> records = consumer.fetchMessages();
             db.sinkData(conn, records);
+
         }
     }
 }
