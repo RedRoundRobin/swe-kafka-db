@@ -12,14 +12,15 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static org.apache.kafka.server.quota.ClientQuotaEntity.ConfigEntityType.CLIENT_ID;
 
 public class Consumer {
-    private String[] topics;
+    private Pattern topics;
     private org.apache.kafka.clients.consumer.Consumer<Long, String> consumer;
 
-    Consumer(String[] topics, String boostrapServers) {
+    Consumer(Pattern topics, String boostrapServers) {
         this.topics = topics;
 
         final Properties properties = new Properties();
@@ -30,7 +31,7 @@ public class Consumer {
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
         org.apache.kafka.clients.consumer.Consumer<Long, String> consumer = new KafkaConsumer<>(properties);
-        consumer.subscribe(Arrays.asList(topics));
+        consumer.subscribe(topics);
         this.consumer = consumer;
     }
 

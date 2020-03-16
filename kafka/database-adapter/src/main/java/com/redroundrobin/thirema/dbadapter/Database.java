@@ -3,6 +3,7 @@ package com.redroundrobin.thirema.dbadapter;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class Database {
         return c;
     }
 
-    public void sinkData(Connection c, List<JsonObject> data) {
+    public void sinkData(@NotNull Connection c, List<JsonObject> data) {
         Statement stat = null;
         try{
             stat = c.createStatement();
@@ -44,6 +45,7 @@ public class Database {
                 JsonObject record = (JsonObject) it.next();
                 for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
                     JsonObject sensor = jsonSensor.getAsJsonObject();
+                    System.out.println(sensor.get("sensorId").getAsInt());
                     String insert = "INSERT INTO sensors (time, sensor_id, device_id, value) VALUES ("+
                             "CURRENT_TIMESTAMP"+
                             sensor.get("sensorId").getAsInt()+","+
@@ -85,15 +87,4 @@ public class Database {
         return null;
     }
 
-    public static void main(String[] args) throws SQLException {
-        Database db = new Database("jdbc:postgresql://localhost:3456/timescale", "user", "user");
-        Consumer consumer = new Consumer(new String[]{"US-GATEWAY-1"}, "localhost:29092");
-        Connection conn = db.openConnection();
-        conn.setAutoCommit(false);
-        while(true){
-            List<JsonObject> records = consumer.fetchMessages();
-            db.sinkData(conn, records);
-
-        }
-    }
 }
