@@ -44,7 +44,6 @@ public class Database {
             Iterator it = data.iterator();
             while(it.hasNext()) {
                 JsonObject record = (JsonObject) it.next();
-                System.out.println(record.get("gateway").getAsString());
                 Random rand = new Random();
                 for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
                     stat = c.createStatement();
@@ -52,21 +51,16 @@ public class Database {
                     String insert = "INSERT INTO sensors (sensor_id, device_id, gateway_id, value) VALUES (" +
                             sensor.get("sensorId").getAsInt()+","+
                             record.get("deviceId").getAsInt()+","+
-                            rand.nextInt()+","+
+                            "'"+record.get("gateway").getAsString()+"'"+","+
                             sensor.get("data").getAsDouble()
                             +");";
 
-
-
                     stat.executeUpdate(insert);
-                    System.out.println("Aggiunto");
                     stat.close();
                     c.commit();
                 }
             }
 
-
-            System.out.println("Inviato");
 
         } catch (SQLException e) {
             e.printStackTrace();

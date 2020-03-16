@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS sensors (
     time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
     sensor_id integer NOT NULL,
     device_id integer NOT NULL,
-    gateway_id integer NOT NULL,
+    gateway_id text NOT NULL,
     value double precision NULL
 );
 
