@@ -6,7 +6,7 @@
 -- select version() as postgresql_version
 
 CREATE TABLE IF NOT EXISTS sensors (
-    time timestamptz PRIMARY KEY,
+    time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
     sensor_id integer NOT NULL,
     device_id integer NOT NULL,
     gateway_id integer NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS sensors (
 );
 
 CREATE TABLE IF NOT EXISTS alerts (
-    time timestamptz PRIMARY KEY,
+    time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
     sensor_id integer NOT NULL,
     device_id integer NOT NULL,
     gateway_id integer NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS alerts (
 );
 
 CREATE TABLE IF NOT EXISTS logs (
-    time timestamptz PRIMARY KEY,
+    time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
     user_id integer NOT NULL,
     operation text NOT NULL,
     data text NULL
