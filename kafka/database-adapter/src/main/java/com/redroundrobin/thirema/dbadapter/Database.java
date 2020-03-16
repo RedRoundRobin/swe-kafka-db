@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 public class Database {
     private String address;
@@ -39,25 +40,33 @@ public class Database {
     public void sinkData(@NotNull Connection c, List<JsonObject> data) {
         Statement stat = null;
         try{
-            stat = c.createStatement();
+
             Iterator it = data.iterator();
             while(it.hasNext()) {
                 JsonObject record = (JsonObject) it.next();
+                System.out.println(record.get("gateway").getAsString());
+                Random rand = new Random();
                 for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
+                    stat = c.createStatement();
                     JsonObject sensor = jsonSensor.getAsJsonObject();
-                    System.out.println(sensor.get("sensorId").getAsInt());
-                    String insert = "INSERT INTO sensors (time, sensor_id, device_id, value) VALUES ("+
-                            "CURRENT_TIMESTAMP"+
+                    String insert = "INSERT INTO sensors (sensor_id, device_id, gateway_id, value) VALUES (" +
                             sensor.get("sensorId").getAsInt()+","+
                             record.get("deviceId").getAsInt()+","+
-                            sensor.get("data").getAsDouble()+"," +
-                            ");";
+                            rand.nextInt()+","+
+                            sensor.get("data").getAsDouble()
+                            +");";
+
+
+
                     stat.executeUpdate(insert);
+                    System.out.println("Aggiunto");
+                    stat.close();
+                    c.commit();
                 }
             }
 
-            stat.close();
-            c.commit();
+
+            System.out.println("Inviato");
 
         } catch (SQLException e) {
             e.printStackTrace();
