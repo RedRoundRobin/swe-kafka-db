@@ -51,15 +51,23 @@ CREATE TABLE IF NOT EXISTS sensors (
   CONSTRAINT fk_device FOREIGN KEY (device_id) REFERENCES devices (device_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS entity_sensors (
+  entity_id integer NOT NULL,
+  sensor_id integer NOT NULL,
+  PRIMARY KEY (entity_id, sensor_id),
+  CONSTRAINT fk_sensor FOREIGN KEY (sensor_id) REFERENCES sensors (sensor_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_entity FOREIGN KEY (entity_id) REFERENCES entities (entity_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS alerts (
   alert_id serial PRIMARY KEY NOT NULL,
-  threshold real,
+  threshold real NOT NULL,
   type smallint NOT NULL,
   deleted boolean NOT NULL DEFAULT false,
-  sensor_id integer,
-  entity_id integer,
-  CONSTRAINT fk_sensor FOREIGN KEY (sensor_id) REFERENCES sensors (sensor_id) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT fk_entity FOREIGN KEY (entity_id) REFERENCES entities (entity_id) ON DELETE SET NULL ON UPDATE CASCADE
+  sensor_id integer NOT NULL,
+  entity_id integer NOT NULL,
+  CONSTRAINT fk_sensor FOREIGN KEY (sensor_id) REFERENCES sensors (sensor_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_entity FOREIGN KEY (entity_id) REFERENCES entities (entity_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS views (
