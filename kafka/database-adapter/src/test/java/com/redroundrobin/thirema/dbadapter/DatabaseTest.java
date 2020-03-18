@@ -11,4 +11,10 @@ public class DatabaseTest {
         Database db = new Database("", "", "");
         db.getData(null);
     }
+
+    @Test(expected = NullPointerException.class)
+    public void getDataTest2() {
+        Database db = new Database("1", "1", "1");
+        db.getData(null);
+    }
 }

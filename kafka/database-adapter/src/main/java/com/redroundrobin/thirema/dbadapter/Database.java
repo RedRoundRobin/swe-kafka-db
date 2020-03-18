@@ -84,7 +84,7 @@ public class Database {
             stat.close();
 
         } catch (SQLException e) {
-            // e.printStackTrace();
+            e.printStackTrace();
         }
         return null;
     }
