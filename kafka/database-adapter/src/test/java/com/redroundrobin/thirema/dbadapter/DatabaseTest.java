@@ -6,7 +6,9 @@ import static org.junit.Assert.*;
 
 public class DatabaseTest {
 
-    @Test
-    public void getData() {
+    @Test(expected = NullPointerException.class)
+    public void getDataTest() {
+        Database db = new Database("", "", "");
+        db.getData(null);
     }
 }
