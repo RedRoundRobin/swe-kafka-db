@@ -10,7 +10,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <sonar.projectKey>Maxelweb_swe-kafka-db</sonar.projectKey>
+        <sonar.projectKey>RedRoundRobin_swe-kafka-db</sonar.projectKey>
         <sonar.organization>redroundrobin</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
