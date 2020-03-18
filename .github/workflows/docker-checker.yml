@@ -16,7 +16,7 @@ jobs:
 
 
     - name: Build with docker-compose
-      run: docker-compose -f kafka/docker-compose.yml build --verbose
+      run: docker-compose -f kafka/docker-compose.yml up -d
 
     - name: Slack Notification
       uses: homoluctus/slatify@v2.0.1
