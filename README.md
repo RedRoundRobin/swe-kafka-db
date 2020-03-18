@@ -7,3 +7,9 @@
 :pushpin: Main repo: [swe-thirema](https://github.com/Maxelweb/swe-thirema)
 
 ---
+
+![SWE Kafka-DB CI](https://github.com/RedRoundRobin/swe-kafka-db/workflows/SWE%20Kafka-DB%20CI/badge.svg)
+
+![Repository Checker](https://github.com/RedRoundRobin/swe-kafka-db/workflows/Repository%20Checker/badge.svg)
+
+![Docker Checker](https://github.com/RedRoundRobin/swe-kafka-db/workflows/Docker%20Checker/badge.svg)
