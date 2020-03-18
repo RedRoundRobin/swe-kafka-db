@@ -70,7 +70,6 @@ public class Database {
 
     public List<JsonObject> getData(Connection c) {
         Statement stat = null;
-        List<JsonObject> records = new ArrayList<>();
         try {
             stat = c.createStatement();
             ResultSet rs = stat.executeQuery( "SELECT * FROM sensors;" );
