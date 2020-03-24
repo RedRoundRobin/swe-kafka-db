@@ -72,7 +72,9 @@ CREATE TABLE IF NOT EXISTS alerts (
 
 CREATE TABLE IF NOT EXISTS views (
   view_id serial PRIMARY KEY NOT NULL,
-  name varchar(32) NOT NULL
+  name varchar(32) NOT NULL,
+  user_id integer NOT NULL,
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS views_graphs (
