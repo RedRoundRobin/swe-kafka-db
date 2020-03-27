@@ -64,32 +64,4 @@ public class Database {
         System.out.println("Records created successfully");
     }
 
-    public List<Alert> getActiveAlerts(Connection c) {
-        Statement stat = null;
-        List<Alert> activeAlerts = new ArrayList<>();
-        try {
-            stat = c.createStatement();
-            ResultSet rs = stat.executeQuery( "SELECT * FROM alerts;" );
-            while ( rs.next() ) {
-                if(rs.getBoolean("deleted")) {
-                    continue;
-                } else {
-                    int alertId = rs.getInt("alert_id"); //TIPO SERIAL?
-                    double threshold = rs.getDouble("threshold");
-                    int type  = rs.getInt("type");
-                    int sensorId = rs.getInt("sensor_id");
-                    int entityId = rs.getInt("entity_id");
-                    activeAlerts.add(new Alert(alertId, threshold, type, sensorId, entityId));
-                }
-
-            }
-            rs.close();
-            stat.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return activeAlerts;
-    }
-
 }

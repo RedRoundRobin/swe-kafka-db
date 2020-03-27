@@ -17,8 +17,5 @@ public class Alert {
         this.entityId = entityId;
     }
 
-    public List<Alert> filterActive(List<Alert>, ) {
-
-    }
 
 }
