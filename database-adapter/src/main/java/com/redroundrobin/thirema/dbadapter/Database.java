@@ -6,10 +6,7 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Database {
     private String address;
@@ -44,7 +41,6 @@ public class Database {
             Iterator it = data.iterator();
             while(it.hasNext()) {
                 JsonObject record = (JsonObject) it.next();
-                Random rand = new Random();
                 for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
                     stat = c.createStatement();
                     JsonObject sensor = jsonSensor.getAsJsonObject();
@@ -68,17 +64,24 @@ public class Database {
         System.out.println("Records created successfully");
     }
 
-    public List<JsonObject> getData(Connection c) {
+    public List<Alert> getActiveAlerts(Connection c) {
         Statement stat = null;
+        List<Alert> activeAlerts = new ArrayList<>();
         try {
             stat = c.createStatement();
-            ResultSet rs = stat.executeQuery( "SELECT * FROM sensors;" );
+            ResultSet rs = stat.executeQuery( "SELECT * FROM alerts;" );
             while ( rs.next() ) {
-                int sensorId = rs.getInt("sensor_id");
-                int deviceId = rs.getInt("device_id");
-                double value  = rs.getDouble("value");
-                long timestamp = rs.getLong("time");
-                //Deve essere ricorstruito il dato
+                if(rs.getBoolean("deleted")) {
+                    continue;
+                } else {
+                    int alertId = rs.getInt("alert_id"); //TIPO SERIAL?
+                    double threshold = rs.getDouble("threshold");
+                    int type  = rs.getInt("type");
+                    int sensorId = rs.getInt("sensor_id");
+                    int entityId = rs.getInt("entity_id");
+                    activeAlerts.add(new Alert(alertId, threshold, type, sensorId, entityId));
+                }
+
             }
             rs.close();
             stat.close();
@@ -86,7 +89,7 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return activeAlerts;
     }
 
 }
