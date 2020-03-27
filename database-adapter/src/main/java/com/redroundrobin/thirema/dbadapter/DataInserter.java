@@ -1,7 +1,7 @@
 package com.redroundrobin.thirema.dbadapter;
 
 import com.google.gson.JsonObject;
-import com.google.gson.annotations.JsonAdapter;
+import com.redroundrobin.thirema.dbadapter.utils.Consumer;
 
 import java.sql.Connection;
 import java.sql.SQLException;

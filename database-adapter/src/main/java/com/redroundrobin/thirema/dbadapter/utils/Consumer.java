@@ -1,4 +1,4 @@
-package com.redroundrobin.thirema.dbadapter;
+package com.redroundrobin.thirema.dbadapter.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

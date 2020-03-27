@@ -1,7 +1,8 @@
 package com.redroundrobin.thirema.dbadapter;
 
 import com.google.gson.JsonObject;
-import com.google.gson.annotations.JsonAdapter;
+
+import com.redroundrobin.thirema.dbadapter.utils.Consumer;
 import org.apache.kafka.clients.producer.Producer;
 
 import java.sql.Connection;
@@ -25,7 +26,6 @@ public class AlertFilter implements DatabaseAdapter {
     }
 
     private void produce(List<JsonObject> data) {
-
     }
 
     @Override
