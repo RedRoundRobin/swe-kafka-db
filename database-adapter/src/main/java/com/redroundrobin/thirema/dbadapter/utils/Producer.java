@@ -29,8 +29,6 @@ public class Producer implements AutoCloseable {
 
     // Viene eseguito il produttore specificato che invia il messaggio nel topic specificato
     public void executeProducer(String topic, String message) throws Exception {
-        System.out.println("Producer " + name + " started!");
-
         long timestamp = System.currentTimeMillis();
         final CountDownLatch countDownLatch = new CountDownLatch(1);
 

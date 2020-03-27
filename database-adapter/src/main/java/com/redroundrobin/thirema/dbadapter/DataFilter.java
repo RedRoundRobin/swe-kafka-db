@@ -3,19 +3,20 @@ package com.redroundrobin.thirema.dbadapter;
 import com.google.gson.JsonObject;
 
 import com.redroundrobin.thirema.dbadapter.utils.Consumer;
-import org.apache.kafka.clients.producer.Producer;
+import com.redroundrobin.thirema.dbadapter.utils.Producer;
+
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class AlertFilter implements DatabaseAdapter {
+public class DataFilter implements DatabaseAdapter {
     private Connection connection;
     private Database database;
     private Consumer consumer;
     private Producer producer;
 
-    public AlertFilter(Database database, Consumer consumer, Producer producer) {
+    public DataFilter(Database database, Consumer consumer, Producer producer) {
         this.database = database;
         this.consumer = consumer;
         this.producer = producer;
@@ -25,7 +26,8 @@ public class AlertFilter implements DatabaseAdapter {
         return null;        //DA RISCRIVERE ANCHE LA FIRMA
     }
 
-    private void produce(List<JsonObject> data) {
+    private void produce(List<JsonObject> data) throws Exception {
+        producer.executeProducer("alerts", data.toString());
     }
 
     @Override
@@ -36,9 +38,11 @@ public class AlertFilter implements DatabaseAdapter {
 
     @Override
     public void run() {
-        List<JsonObject> records = consumer.fetchMessages();
-        //Filtrare jsonObjects
-        //Produce nel topic alerts
+        while(true) {
+            List<JsonObject> records = consumer.fetchMessages();
+            //Filtrare jsonObjects
+            //Produce nel topic alerts
+        }
     }
 
 }
