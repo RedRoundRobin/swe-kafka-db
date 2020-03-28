@@ -3,16 +3,17 @@ package com.redroundrobin.thirema.dbadapter;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import com.redroundrobin.thirema.dbadapter.utils.AlertTimeTable;
 import com.redroundrobin.thirema.dbadapter.utils.Consumer;
+import com.redroundrobin.thirema.dbadapter.utils.Message;
 import com.redroundrobin.thirema.dbadapter.utils.Producer;
-import javafx.util.Pair;
 
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataFilter implements DatabaseAdapter {
@@ -20,11 +21,13 @@ public class DataFilter implements DatabaseAdapter {
     private Database database;
     private Consumer consumer;
     private Producer producer;
+    private AlertTimeTable alertTimeTable;
 
     public DataFilter(Database database, Consumer consumer, Producer producer) {
         this.database = database;
         this.consumer = consumer;
         this.producer = producer;
+        this.alertTimeTable = new AlertTimeTable();
     }
 
 
@@ -44,7 +47,8 @@ public class DataFilter implements DatabaseAdapter {
     }
 
     private int databaseGetSensorLogicalId(int realDeviceId, int realSensorId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT device_id, sensor_id FROM sensors_devices_view " +
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT device_id, sensor_id " +
+                "FROM sensors_devices_view " +
                 "WHERE real_device_id = ? AND real_sensor_id = ? LIMIT 1");
         preparedStatement.setInt(1, realDeviceId);
         preparedStatement.setInt(2, realSensorId);
@@ -55,7 +59,9 @@ public class DataFilter implements DatabaseAdapter {
     }
 
 
-    private List<JsonObject> filter(List<JsonObject> data) throws SQLException {
+    private List<Message> filter(List<JsonObject> data) throws SQLException {
+
+        List<Message> alerts = new ArrayList<>();
 
         for(JsonObject device : data){
             int realDeviceId = device.get("deviceId").getAsInt();
@@ -73,17 +79,35 @@ public class DataFilter implements DatabaseAdapter {
                 }
 
                 int logicalSensorId = databaseGetSensorLogicalId(realDeviceId, realSensorId);
+                int sensorValue = sensor.get("data").getAsInt();
 
-                PreparedStatement preparedStatement = connection.prepareStatement("SELECT alerts FROM sensors_devices_view " +
-                        "WHERE real_device_id = ? AND real_sensor_id = ? LIMIT 1");
-                preparedStatement.setInt(1, realDeviceId);
-                preparedStatement.setInt(2, realSensorId);
-
+                PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts " +
+                        "WHERE (sensor_id = ? AND deleted = 0) AND" +
+                        "((type==0 AND threshold > ?) OR " +
+                        "(type==1 AND threshold < ?) OR " +
+                        "(type==2 AND threshold == ?)) ");
+                preparedStatement.setInt(1, realSensorId);
+                preparedStatement.setInt(2, sensorValue);
+                preparedStatement.setInt(3, sensorValue);
+                preparedStatement.setInt(4, sensorValue);
                 ResultSet resultSet = preparedStatement.executeQuery();
-                resultSet.next();
-
+                while(resultSet.next())
+                {
+                    if(alertTimeTable.verifyAlert(resultSet.getInt("alert_id"))) {
+                        Message message = new Message();
+                        message.setAlertId(resultSet.getInt("alert_id"));
+                        message.setAlertId(resultSet.getInt("entity_id"));
+                        message.setRealDeviceId(realDeviceId);
+                        message.setRealSensorId(realSensorId);
+                        message.setCurrentThreshold(resultSet.getInt("threshold"));
+                        message.setCurrentThresholdType(resultSet.getInt("type"));
+                        alerts.add(message);
+                    }
+                }
             }
         }
+
+        return alerts;
     }
 
     private void produce(List<JsonObject> data) throws Exception {
