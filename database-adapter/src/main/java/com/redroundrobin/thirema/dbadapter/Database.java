@@ -22,7 +22,6 @@ public class Database {
     public Connection openConnection() {   //RICORDARSI DI CHIUDERE LA CONNESSIONE
         Connection c = null;
         try {
-            Class.forName("org.postgresql.Driver");
             c = DriverManager
                     .getConnection(address, username, password);
         } catch (Exception e) {
@@ -34,13 +33,23 @@ public class Database {
         return c;
     }
 
+    public boolean findData(@NotNull PreparedStatement preparedStatement) throws SQLException {
+        boolean res = false;
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            resultSet.next();
+            res = resultSet.getInt(1) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        preparedStatement.close();
+        return res;
+    }
+
     public void sinkData(@NotNull Connection c, List<JsonObject> data) {
         Statement stat = null;
         try{
 
-            Iterator it = data.iterator();
-            while(it.hasNext()) {
-                JsonObject record = (JsonObject) it.next();
+           for(JsonObject record : data) {
                 for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
                     stat = c.createStatement();
                     JsonObject sensor = jsonSensor.getAsJsonObject();
@@ -55,7 +64,7 @@ public class Database {
                     stat.close();
                     c.commit();
                 }
-            }
+           }
 
 
         } catch (SQLException e) {
@@ -63,5 +72,6 @@ public class Database {
         }
         System.out.println("Records created successfully");
     }
+
 
 }
