@@ -46,6 +46,14 @@ public class DataFilter implements DatabaseAdapter {
         return database.findData(preparedStatement);
     }
 
+    private boolean databaseCheckDisabledAlert(int userId, int alertId) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM disabled_users_alerts " +
+                "WHERE user_id = ? AND alert_id = ? LIMIT 1");
+        preparedStatement.setInt(1, userId);
+        preparedStatement.setInt(2, alertId);
+        return database.findData(preparedStatement);
+    }
+
     private int databaseGetSensorLogicalId(int realDeviceId, int realSensorId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT device_id, sensor_id " +
                 "FROM sensors_devices_view " +
@@ -59,7 +67,7 @@ public class DataFilter implements DatabaseAdapter {
     }
 
 
-    private List<Message> filter(List<JsonObject> data) throws SQLException {
+    private List<Message> filterRealAlerts(List<JsonObject> data) throws SQLException {
 
         List<Message> alerts = new ArrayList<>();
 
@@ -110,6 +118,24 @@ public class DataFilter implements DatabaseAdapter {
         return alerts;
     }
 
+    private List<Message> filterTelegramUsers(List<Message> messages) throws SQLException {
+        for(Message message : messages){
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT user_id,telegram_chat FROM users " +
+                    "WHERE deleted = 0 AND telegram_name IS NOT NULL AND telegram_chat IS NOT NULL " +
+                    "AND entity_id= ?");
+            preparedStatement.setInt(1, message.getEntityId());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<String> telegramChats = new ArrayList<>();
+            while(resultSet.next()){
+                if(!databaseCheckDisabledAlert(resultSet.getInt("user_id"), message.getAlertId()))
+                {
+                    telegramChats.add(resultSet.getString("telegram_chat"));
+                }
+            }
+        }
+        return messages;
+    }
+
     private void produce(List<JsonObject> data) throws Exception {
         producer.executeProducer("alerts", data.toString());
     }
@@ -126,6 +152,23 @@ public class DataFilter implements DatabaseAdapter {
             List<JsonObject> records = consumer.fetchMessages();
             //Filtrare jsonObjects
             //Produce nel topic alerts
+
+            /*
+                Procedimento:
+                - Chiamo il filterAlerts --> mi ritorna una lista di alerts filtrati e validi, senza gli utenti telegram
+                                             che vanno contattati
+                - Chiamo il filterTelegramUser --> esegue il controllo di chi deve essere notificato
+                                                   e che non abbia quella notifica disabilitata
+                - La struttura List<Message> la inoltro con la formattazione automatica al producer Kafka
+
+
+                Nota:
+                - Il controllo attuale viene fatto con un hashmap che verifica se ci sono stati almeno 2 casi
+                  negli ultimi 5 minuti. In caso positivo, si ritiene la registrazione valida, altrimenti no.
+                  Tuttavia questo potrebbe non funzionare con frequenze dati > 5 minuti.
+                - Inoltre, sarebbe da loggare la notifica nella tabella alerts di postgres, segnalando l'ultimo messaggio inviato
+                  così da evitare di ricontattare ogni pochi secondi gli alert, nel caso ci siano più segnalazioni positive.
+             */
         }
     }
 

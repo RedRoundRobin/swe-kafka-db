@@ -11,7 +11,6 @@ public class Message {
     private int currentThreshold;
     private int currentThresholdType;
     private List<String> telegramChatId;
-    private List<String> telegramName;
 
     public String getType() {
         return type;
@@ -63,14 +62,6 @@ public class Message {
 
     public void setTelegramChatId(List<String> telegramChatId) {
         this.telegramChatId = telegramChatId;
-    }
-
-    public List<String> getTelegramName() {
-        return telegramName;
-    }
-
-    public void setTelegramName(List<String> telegramName) {
-        this.telegramName = telegramName;
     }
 
     public int getEntityId() {

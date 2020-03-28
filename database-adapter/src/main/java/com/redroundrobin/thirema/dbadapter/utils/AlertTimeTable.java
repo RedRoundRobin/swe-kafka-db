@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class AlertTimeTable {
 
     private HashMap<Integer, Long> hashMap;
-    private static long minutesDelay = 2*60; // 2 min
+    private static long minutesDelay = 5*60; // 5 min
 
     public AlertTimeTable() {
         hashMap = new HashMap<>();
