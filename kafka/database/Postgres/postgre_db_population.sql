@@ -72,7 +72,6 @@ insert into Users (user_id, name, surname, email, password, type, entity_id) val
 
 
 -- FOREIGN KEYS Coffee Company - sensors
-INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '1');
 INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '3');
 INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '4');
 INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '7');
