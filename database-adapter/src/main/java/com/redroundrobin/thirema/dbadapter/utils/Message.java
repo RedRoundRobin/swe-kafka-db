@@ -3,7 +3,7 @@ package com.redroundrobin.thirema.dbadapter.utils;
 import java.util.List;
 
 public class Message {
-    private static String type = "alert";
+    private static String reqType = "alert";
     private int alertId;
     private int entityId;
     private int realDeviceId;
@@ -12,8 +12,8 @@ public class Message {
     private int currentThresholdType;
     private List<String> telegramChatId;
 
-    public String getType() {
-        return type;
+    public static String getReqType() {
+        return reqType;
     }
 
     public int getAlertId() {

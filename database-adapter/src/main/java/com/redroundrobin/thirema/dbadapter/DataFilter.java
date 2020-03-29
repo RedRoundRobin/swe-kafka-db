@@ -30,20 +30,24 @@ public class DataFilter implements DatabaseAdapter {
         this.alertTimeTable = new AlertTimeTable();
     }
 
-
+    private void databaseCommit() throws SQLException {
+        connection.commit();
+    }
 
     private boolean databaseCheckDeviceExistence(int realDeviceId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM devices " +
                 "WHERE real_device_id = ? LIMIT 1");
         preparedStatement.setInt(1, realDeviceId);
-        return database.findData(preparedStatement);
+        boolean result = database.findData(preparedStatement);
+        return result;
     }
 
     private boolean databaseCheckSensorExistence(int realSensorId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM sensors " +
                 "WHERE real_sensor_id = ? LIMIT 1");
         preparedStatement.setInt(1, realSensorId);
-        return database.findData(preparedStatement);
+        boolean result = database.findData(preparedStatement);
+        return result;
     }
 
     private boolean databaseCheckDisabledAlert(int userId, int alertId) throws SQLException {
@@ -51,7 +55,8 @@ public class DataFilter implements DatabaseAdapter {
                 "WHERE user_id = ? AND alert_id = ? LIMIT 1");
         preparedStatement.setInt(1, userId);
         preparedStatement.setInt(2, alertId);
-        return database.findData(preparedStatement);
+        boolean result = database.findData(preparedStatement);
+        return result;
     }
 
     private int databaseGetSensorLogicalId(int realDeviceId, int realSensorId) throws SQLException {
@@ -63,9 +68,19 @@ public class DataFilter implements DatabaseAdapter {
 
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
-        return resultSet.getInt(2); // only sensor_id
+        int logicalSensorId = resultSet.getInt("sensor_id");
+        preparedStatement.close();
+        return logicalSensorId; // only sensor_id
     }
 
+    private void databaseUpdateAlert(int alertId) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = NOW() " +
+                "WHERE alert_id = ? LIMIT 1");
+        preparedStatement.setInt(1, alertId);
+        preparedStatement.executeQuery();
+        preparedStatement.close();
+        databaseCommit();
+    }
 
     private List<Message> filterRealAlerts(List<JsonObject> data) throws SQLException {
 
@@ -90,7 +105,8 @@ public class DataFilter implements DatabaseAdapter {
                 int sensorValue = sensor.get("data").getAsInt();
 
                 PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts " +
-                        "WHERE (sensor_id = ? AND deleted = 0) AND" +
+                        "WHERE (sensor_id = ? AND deleted = 0 " +
+                        "AND last_sent < (NOW() - '10 minutes'::interval) ) AND" +
                         "((type==0 AND threshold > ?) OR " +
                         "(type==1 AND threshold < ?) OR " +
                         "(type==2 AND threshold == ?)) ");
@@ -109,9 +125,12 @@ public class DataFilter implements DatabaseAdapter {
                         message.setRealSensorId(realSensorId);
                         message.setCurrentThreshold(resultSet.getInt("threshold"));
                         message.setCurrentThresholdType(resultSet.getInt("type"));
+
                         alerts.add(message);
+                        databaseUpdateAlert(resultSet.getInt("alert_id"));
                     }
                 }
+                preparedStatement.close();
             }
         }
 
@@ -169,6 +188,17 @@ public class DataFilter implements DatabaseAdapter {
                 - Inoltre, sarebbe da loggare la notifica nella tabella alerts di postgres, segnalando l'ultimo messaggio inviato
                   così da evitare di ricontattare ogni pochi secondi gli alert, nel caso ci siano più segnalazioni positive.
              */
+
+            try {
+                List<Message> messages = filterRealAlerts(records);
+                messages = filterTelegramUsers(messages);
+
+                // messaggi da inviare al producer
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
