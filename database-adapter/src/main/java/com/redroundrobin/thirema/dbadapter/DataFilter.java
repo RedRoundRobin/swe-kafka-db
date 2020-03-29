@@ -1,5 +1,6 @@
 package com.redroundrobin.thirema.dbadapter;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -155,8 +156,8 @@ public class DataFilter implements DatabaseAdapter {
         return messages;
     }
 
-    private void produce(List<JsonObject> data) throws Exception {
-        producer.executeProducer("alerts", data.toString());
+    private void produce(String messages) throws Exception {
+        producer.executeProducer("alerts", messages);
     }
 
     @Override
@@ -167,6 +168,7 @@ public class DataFilter implements DatabaseAdapter {
 
     @Override
     public void run() {
+        Gson gson = new Gson();
         while(true) {
             List<JsonObject> records = consumer.fetchMessages();
             //Filtrare jsonObjects
@@ -192,10 +194,13 @@ public class DataFilter implements DatabaseAdapter {
             try {
                 List<Message> messages = filterRealAlerts(records);
                 messages = filterTelegramUsers(messages);
-
+                String jsonMessages = gson.toJson(messages);
+                produce(jsonMessages);
                 // messaggi da inviare al producer
 
             } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
