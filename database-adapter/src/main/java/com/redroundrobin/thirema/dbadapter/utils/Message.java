@@ -4,8 +4,9 @@ import java.util.List;
 
 public class Message {
     private static String reqType = "alert";
-    private int alertId;
-    private int entityId;
+    private transient int alertId;
+    private transient int entityId;
+    private String sensorType;
     private int realDeviceId;
     private int realSensorId;
     private int currentThreshold;
@@ -70,5 +71,13 @@ public class Message {
 
     public void setEntityId(int entityId) {
         this.entityId = entityId;
+    }
+
+    public String getSensorType() {
+        return sensorType;
+    }
+
+    public void setSensorType(String sensorType) {
+        this.sensorType = sensorType;
     }
 }

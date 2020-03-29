@@ -8,6 +8,7 @@ import com.redroundrobin.thirema.dbadapter.utils.AlertTimeTable;
 import com.redroundrobin.thirema.dbadapter.utils.Consumer;
 import com.redroundrobin.thirema.dbadapter.utils.Message;
 import com.redroundrobin.thirema.dbadapter.utils.Producer;
+import javafx.util.Pair;
 
 
 import java.sql.Connection;
@@ -60,8 +61,8 @@ public class DataFilter implements DatabaseAdapter {
         return result;
     }
 
-    private int databaseGetSensorLogicalId(int realDeviceId, int realSensorId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT device_id, sensor_id " +
+    private Pair<Integer,String> databaseGetSensorLogicalIdAndType(int realDeviceId, int realSensorId) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT sensor_id, type " +
                 "FROM sensors_devices_view " +
                 "WHERE real_device_id = ? AND real_sensor_id = ? LIMIT 1");
         preparedStatement.setInt(1, realDeviceId);
@@ -70,8 +71,9 @@ public class DataFilter implements DatabaseAdapter {
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         int logicalSensorId = resultSet.getInt("sensor_id");
+        String sensorType = resultSet.getString("type");
         preparedStatement.close();
-        return logicalSensorId; // only sensor_id
+        return new Pair<>(logicalSensorId, sensorType);
     }
 
     private void databaseUpdateAlert(int alertId) throws SQLException {
@@ -102,16 +104,16 @@ public class DataFilter implements DatabaseAdapter {
                     continue;
                 }
 
-                int logicalSensorId = databaseGetSensorLogicalId(realDeviceId, realSensorId);
+                Pair<Integer,String> sensorData = databaseGetSensorLogicalIdAndType(realDeviceId, realSensorId);
                 int sensorValue = sensor.get("data").getAsInt();
 
                 PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts " +
                         "WHERE (sensor_id = ? AND deleted = 0 " +
                         "AND last_sent < (NOW() - '10 minutes'::interval) ) AND" +
-                        "((type==0 AND threshold > ?) OR " +
-                        "(type==1 AND threshold < ?) OR " +
-                        "(type==2 AND threshold == ?)) ");
-                preparedStatement.setInt(1, realSensorId);
+                        "((type = 0 AND ? > threshold) OR " +
+                        "(type = 1 AND ? < threshold) OR " +
+                        "(type = 2 AND ? = threshold)) ");
+                preparedStatement.setInt(1, sensorData.getKey());
                 preparedStatement.setInt(2, sensorValue);
                 preparedStatement.setInt(3, sensorValue);
                 preparedStatement.setInt(4, sensorValue);
@@ -122,6 +124,7 @@ public class DataFilter implements DatabaseAdapter {
                         Message message = new Message();
                         message.setAlertId(resultSet.getInt("alert_id"));
                         message.setAlertId(resultSet.getInt("entity_id"));
+                        message.setSensorType(sensorData.getValue());
                         message.setRealDeviceId(realDeviceId);
                         message.setRealSensorId(realSensorId);
                         message.setCurrentThreshold(resultSet.getInt("threshold"));
