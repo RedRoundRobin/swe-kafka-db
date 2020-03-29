@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class DataInserter implements DatabaseAdapter{
+public class DataInserter implements Runnable{
     private Connection connection;
     private Database database;
     private Consumer consumer;
@@ -18,13 +18,13 @@ public class DataInserter implements DatabaseAdapter{
     }
 
     @Override
-    public void start() throws SQLException {
-        connection = database.openConnection();
-        connection.setAutoCommit(false);
-    }
-
-    @Override
     public void run() {
+        connection = database.openConnection();
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         while(true){
             List<JsonObject> records = consumer.fetchMessages();
             database.sinkData(connection, records);

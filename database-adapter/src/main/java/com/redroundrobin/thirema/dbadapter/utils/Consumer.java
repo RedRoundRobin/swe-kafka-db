@@ -20,7 +20,7 @@ public class Consumer {
     private Pattern topics;
     private org.apache.kafka.clients.consumer.Consumer<Long, String> consumer;
 
-    Consumer(Pattern topics, String boostrapServers) {
+    public Consumer(Pattern topics, String boostrapServers) {
         this.topics = topics;
 
         final Properties properties = new Properties();

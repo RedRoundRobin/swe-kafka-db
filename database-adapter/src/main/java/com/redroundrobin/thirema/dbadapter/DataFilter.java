@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataFilter implements DatabaseAdapter {
+public class DataFilter implements Runnable {
     private Connection connection;
     private Database database;
     private Consumer consumer;
@@ -164,13 +164,13 @@ public class DataFilter implements DatabaseAdapter {
     }
 
     @Override
-    public void start() throws SQLException {
-        connection = database.openConnection();
-        connection.setAutoCommit(false);
-    }
-
-    @Override
     public void run() {
+        connection = database.openConnection();
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         Gson gson = new Gson();
         while(true) {
             List<JsonObject> records = consumer.fetchMessages();
