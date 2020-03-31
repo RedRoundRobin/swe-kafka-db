@@ -129,7 +129,7 @@ public class DataFilter implements Runnable {
                         message.setRealSensorId(realSensorId);
                         message.setCurrentThreshold(resultSet.getInt("threshold"));
                         message.setCurrentThresholdType(resultSet.getInt("type"));
-
+                        System.out.println(resultSet.getInt("alert_id"));
                         alerts.add(message);
                         databaseUpdateAlert(resultSet.getInt("alert_id"));
                     }
@@ -196,8 +196,13 @@ public class DataFilter implements Runnable {
 
             try {
                 List<Message> messages = filterRealAlerts(records);
+                System.out.print(messages.size());
+                System.out.println(" created after RealAlerts filter");
                 messages = filterTelegramUsers(messages);
+                System.out.print(messages.size());
+                System.out.println(" created after TelegramUsers filter");
                 String jsonMessages = gson.toJson(messages);
+                System.out.println(jsonMessages);
                 produce(jsonMessages);
                 // messaggi da inviare al producer
 

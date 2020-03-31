@@ -53,6 +53,7 @@ public class Database {
                 for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
                     stat = c.createStatement();
                     JsonObject sensor = jsonSensor.getAsJsonObject();
+                    System.out.println(sensor.toString());
                     String insert = "INSERT INTO sensors (sensor_id, device_id, gateway_id, value) VALUES (" +
                             sensor.get("sensorId").getAsInt()+","+
                             record.get("deviceId").getAsInt()+","+
