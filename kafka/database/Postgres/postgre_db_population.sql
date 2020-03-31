@@ -65,7 +65,7 @@ INSERT INTO "public"."entities" ("entity_id", "name", "location", "deleted") VAL
 INSERT INTO "public"."entities" ("entity_id", "name", "location", "deleted") VALUES ('5', 'Drinks Company', 'Usa', 'false');
 
 -- Administrator Users
-insert into Users (user_id, name, surname, email, password, type) values (1, 'admin', 'istrator', 'administrator', 'administrator', 2);
+insert into Users (user_id, name, surname, email, password, type) values (1, 'admin', 'istrator', 'admin@admin.it', 'admin', 2);
 
 -- Coffee Company Users
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (2, 'Kimbra', 'Timmins', 'ktimmins0@purevolume.com', 'password2', 0, 1);
