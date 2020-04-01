@@ -1,3 +1,10 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
+-- PostgreSQL 9.6
+-- '\\' is a delimiter
+
+-- select version() as postgresql_version
+
 
 CREATE TABLE IF NOT EXISTS entities (
   entity_id serial PRIMARY KEY NOT NULL,
