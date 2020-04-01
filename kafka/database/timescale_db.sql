@@ -1,9 +1,3 @@
--- noinspection SqlNoDataSourceInspectionForFile
-
--- PostgreSQL 9.6
--- '\\' is a delimiter
-
--- select version() as postgresql_version
 
 CREATE TABLE IF NOT EXISTS sensors (
     time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
