@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS alerts (
   deleted boolean NOT NULL DEFAULT false,
   sensor_id integer NOT NULL,
   entity_id integer NOT NULL,
+  last_sent timestamptz DEFAULT NULL,
   CONSTRAINT fk_sensor FOREIGN KEY (sensor_id) REFERENCES sensors (sensor_id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_entity FOREIGN KEY (entity_id) REFERENCES entities (entity_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -105,3 +106,9 @@ CREATE TABLE IF NOT EXISTS disabled_users_alerts (
   CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_alert FOREIGN KEY (alert_id) REFERENCES alerts (alert_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE VIEW sensors_devices_view AS 
+SELECT s.device_id, real_device_id, sensor_id, real_sensor_id, type
+FROM sensors s, devices d
+WHERE s.device_id=d.device_id;
+
