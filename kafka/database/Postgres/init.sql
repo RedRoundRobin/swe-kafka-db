@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS views_graphs (
   CONSTRAINT fk_sensor2 FOREIGN KEY (sensor_2_id) REFERENCES sensors (sensor_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-ALTER SEQUENCE views_graphs_graph_id_seq INCREMENT 50 OWNED BY views_graphs.graph_id;
+ALTER SEQUENCE views_graphs_graph_id_seq INCREMENT 50 OWNED BY views_graphs.view_id;
 
 CREATE TABLE IF NOT EXISTS disabled_users_alerts (
   user_id integer NOT NULL,
