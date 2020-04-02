@@ -8,6 +8,8 @@
 
 ---
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=RedRoundRobin_swe-kafka-db&metric=alert_status)](https://sonarcloud.io/dashboard?id=RedRoundRobin_swe-kafka-db)
+
 ![SWE Kafka-DB CI](https://github.com/RedRoundRobin/swe-kafka-db/workflows/SWE%20Kafka-DB%20CI/badge.svg)
 
 ![Repository Checker](https://github.com/RedRoundRobin/swe-kafka-db/workflows/Repository%20Checker/badge.svg)
