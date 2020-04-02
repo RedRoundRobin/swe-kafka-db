@@ -7,24 +7,24 @@
 
 CREATE TABLE IF NOT EXISTS sensors (
     time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
-    sensor_id integer NOT NULL,
-    device_id integer NOT NULL,
-    gateway_id text NOT NULL,
+    real_sensor_id integer NOT NULL,
+    real_device_id integer NOT NULL,
+    gateway_name text NOT NULL,
     value double precision NULL
 );
 
 CREATE TABLE IF NOT EXISTS alerts (
     time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
-    sensor_id integer NOT NULL,
-    device_id integer NOT NULL,
-    gateway_id integer NOT NULL,
+    real_sensor_id integer NOT NULL,
+    real_device_id integer NOT NULL,
+    gateway_name text NOT NULL,
     value double precision NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS logs (
     time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
     user_id integer NOT NULL,
-    ip_addr varchar(24) NOT NULL,
+    ip_addr varchar(36) NOT NULL,
     operation text NOT NULL,
     data text NULL
 );

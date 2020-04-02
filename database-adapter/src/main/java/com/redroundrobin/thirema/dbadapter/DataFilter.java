@@ -17,6 +17,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DataFilter implements Runnable {
     private Connection connection;
@@ -24,6 +26,7 @@ public class DataFilter implements Runnable {
     private Consumer consumer;
     private Producer producer;
     private AlertTimeTable alertTimeTable;
+    private static final Logger logger = Logger.getLogger(DataFilter.class.getName());
 
     public DataFilter(Database database, Consumer consumer, Producer producer) {
         this.database = database;
@@ -36,10 +39,12 @@ public class DataFilter implements Runnable {
         connection.commit();
     }
 
-    private boolean databaseCheckDeviceExistence(int realDeviceId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM devices " +
-                "WHERE real_device_id = ? LIMIT 1");
+    private boolean databaseCheckDeviceExistence(int realDeviceId, String gatewayName) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM devices d,gateways g " +
+                "WHERE d.gateway_id=g.gateway_id AND d.real_device_id = ? " +
+                "AND g.name = ? LIMIT 1");
         preparedStatement.setInt(1, realDeviceId);
+        preparedStatement.setString(2, gatewayName);
         boolean result = database.findData(preparedStatement);
         return result;
     }
@@ -61,13 +66,13 @@ public class DataFilter implements Runnable {
         return result;
     }
 
-    private Pair<Integer,String> databaseGetSensorLogicalIdAndType(int realDeviceId, int realSensorId) throws SQLException {
+    private Pair<Integer,String> databaseGetSensorLogicalIdAndType(int realDeviceId, int realSensorId, String gatewayName) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT sensor_id, type " +
                 "FROM sensors_devices_view " +
-                "WHERE real_device_id = ? AND real_sensor_id = ? LIMIT 1");
+                "WHERE real_device_id = ? AND real_sensor_id = ? AND g.name = ? LIMIT 1");
         preparedStatement.setInt(1, realDeviceId);
         preparedStatement.setInt(2, realSensorId);
-
+        preparedStatement.setString(3, gatewayName);
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         int logicalSensorId = resultSet.getInt("sensor_id");
@@ -91,8 +96,9 @@ public class DataFilter implements Runnable {
 
         for(JsonObject device : data){
             int realDeviceId = device.get("deviceId").getAsInt();
-            if(!databaseCheckDeviceExistence(realDeviceId)) {
-                System.out.println("Device not found in DB. The gateway configuration is not up to date.");
+            String gatewayName = device.get("gateway").getAsString();
+            if(!databaseCheckDeviceExistence(realDeviceId, gatewayName)) {
+                logger.warning("Device not found in DB. The gateway configuration is not up to date.");
                 continue;
             }
 
@@ -100,11 +106,11 @@ public class DataFilter implements Runnable {
                 JsonObject sensor = jsonSensor.getAsJsonObject();
                 int realSensorId = sensor.get("sensorId").getAsInt();
                 if(!databaseCheckSensorExistence(realSensorId)) {
-                    System.out.println("Sensor not found in DB. The gateway configuration is not up to date.");
+                    logger.warning("Sensor not found in DB. The gateway configuration is not up to date.");
                     continue;
                 }
 
-                Pair<Integer,String> sensorData = databaseGetSensorLogicalIdAndType(realDeviceId, realSensorId);
+                Pair<Integer,String> sensorData = databaseGetSensorLogicalIdAndType(realDeviceId, realSensorId, gatewayName);
                 int sensorValue = sensor.get("data").getAsInt();
 
                 PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts " +
@@ -120,18 +126,21 @@ public class DataFilter implements Runnable {
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while(resultSet.next())
                 {
-                    if(alertTimeTable.verifyAlert(resultSet.getInt("alert_id"))) {
+                    int alertId = resultSet.getInt("alert_id");
+                    if(alertTimeTable.verifyAlert(alertId)) {
                         Message message = new Message();
-                        message.setAlertId(resultSet.getInt("alert_id"));
-                        message.setAlertId(resultSet.getInt("entity_id"));
+                        message.setAlertId(alertId);
+                        message.setEntityId(resultSet.getInt("entity_id"));
                         message.setSensorType(sensorData.getValue());
                         message.setRealDeviceId(realDeviceId);
                         message.setRealSensorId(realSensorId);
                         message.setCurrentThreshold(resultSet.getInt("threshold"));
                         message.setCurrentThresholdType(resultSet.getInt("type"));
-                        System.out.println(resultSet.getInt("alert_id"));
+                        message.setCurrentValue(sensorValue);
+                        message.setRealGatewayName(gatewayName);
+                        logger.log(Level.INFO, "Valid alert: {0}", alertId);
                         alerts.add(message);
-                        databaseUpdateAlert(resultSet.getInt("alert_id"));
+                        databaseUpdateAlert(alertId);
                     }
                 }
                 preparedStatement.close();
@@ -174,8 +183,6 @@ public class DataFilter implements Runnable {
         Gson gson = new Gson();
         while(true) {
             List<JsonObject> records = consumer.fetchMessages();
-            //Filtrare jsonObjects
-            //Produce nel topic alerts
 
             /*
                 Procedimento:
@@ -185,31 +192,22 @@ public class DataFilter implements Runnable {
                                                    e che non abbia quella notifica disabilitata
                 - La struttura List<Message> la inoltro con la formattazione automatica al producer Kafka
 
-
-                Nota:
-                - Il controllo attuale viene fatto con un hashmap che verifica se ci sono stati almeno 2 casi
-                  negli ultimi 5 minuti. In caso positivo, si ritiene la registrazione valida, altrimenti no.
-                  Tuttavia questo potrebbe non funzionare con frequenze dati > 5 minuti.
-                - Inoltre, sarebbe da loggare la notifica nella tabella alerts di postgres, segnalando l'ultimo messaggio inviato
-                  così da evitare di ricontattare ogni pochi secondi gli alert, nel caso ci siano più segnalazioni positive.
              */
 
             try {
                 List<Message> messages = filterRealAlerts(records);
-                System.out.print(messages.size());
-                System.out.println(" created after RealAlerts filter");
+                logger.log(Level.INFO, "{0} created after RealAlerts filter", Integer.toString(messages.size()));
                 messages = filterTelegramUsers(messages);
-                System.out.print(messages.size());
-                System.out.println(" created after TelegramUsers filter");
+                logger.log(Level.INFO, "{0} created after TelegramUsers filter", Integer.toString(messages.size()));
                 String jsonMessages = gson.toJson(messages);
-                System.out.println(jsonMessages);
+                logger.info(jsonMessages);
                 produce(jsonMessages);
                 // messaggi da inviare al producer
 
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "SQL Exception occur!", e);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "SQL Exception occur!", e);
             }
 
         }
