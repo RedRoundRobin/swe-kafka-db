@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 
-public class Adapters {
+public class AdaptersApplication {
     public static void main(String[] args) {
        try {
            Database timescale = new Database("jdbc:postgresql://localhost:3456/timescale", "user", "user");

@@ -34,7 +34,8 @@ ALTER SEQUENCE users_user_id_seq INCREMENT 50 OWNED BY users.user_id;
 
 CREATE TABLE IF NOT EXISTS gateways (
   gateway_id serial PRIMARY KEY NOT NULL,
-  name varchar(32) NOT NULL
+  name varchar(32) NOT NULL,
+  last_sent timestamptz DEFAULT NULL
 );
 
 ALTER SEQUENCE gateways_gateway_id_seq INCREMENT 50 OWNED BY gateways.gateway_id;
@@ -114,8 +115,9 @@ CREATE TABLE IF NOT EXISTS disabled_users_alerts (
   CONSTRAINT fk_alert FOREIGN KEY (alert_id) REFERENCES alerts (alert_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+
 CREATE VIEW sensors_devices_view AS 
-SELECT s.device_id, real_device_id, sensor_id, real_sensor_id, type
-FROM sensors s, devices d
-WHERE s.device_id=d.device_id;
+SELECT s.device_id, real_device_id, sensor_id, real_sensor_id, type, g.gateway_id, g.name
+FROM sensors s, devices d, gateways g
+WHERE s.device_id = d.device_id AND d.gateway_id = g.gateway_id;
 

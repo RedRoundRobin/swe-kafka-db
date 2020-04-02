@@ -34,4 +34,8 @@ public class AlertTimeTable {
         hashMap.clear();
     }
 
+    public int size() {
+        return hashMap.size();
+    }
+
 }

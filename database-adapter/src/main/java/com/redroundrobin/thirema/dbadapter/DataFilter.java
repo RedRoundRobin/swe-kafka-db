@@ -36,10 +36,12 @@ public class DataFilter implements Runnable {
         connection.commit();
     }
 
-    private boolean databaseCheckDeviceExistence(int realDeviceId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM devices " +
-                "WHERE real_device_id = ? LIMIT 1");
+    private boolean databaseCheckDeviceExistence(int realDeviceId, String gatewayName) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM devices d,gateways g " +
+                "WHERE d.gateway_id=g.gateway_id AND d.real_device_id = ? " +
+                "AND g.name = ? LIMIT 1");
         preparedStatement.setInt(1, realDeviceId);
+        preparedStatement.setString(2, gatewayName);
         boolean result = database.findData(preparedStatement);
         return result;
     }
@@ -61,13 +63,13 @@ public class DataFilter implements Runnable {
         return result;
     }
 
-    private Pair<Integer,String> databaseGetSensorLogicalIdAndType(int realDeviceId, int realSensorId) throws SQLException {
+    private Pair<Integer,String> databaseGetSensorLogicalIdAndType(int realDeviceId, int realSensorId, String gatewayName) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT sensor_id, type " +
                 "FROM sensors_devices_view " +
-                "WHERE real_device_id = ? AND real_sensor_id = ? LIMIT 1");
+                "WHERE real_device_id = ? AND real_sensor_id = ? AND g.name = ? LIMIT 1");
         preparedStatement.setInt(1, realDeviceId);
         preparedStatement.setInt(2, realSensorId);
-
+        preparedStatement.setString(3, gatewayName);
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         int logicalSensorId = resultSet.getInt("sensor_id");
@@ -91,7 +93,8 @@ public class DataFilter implements Runnable {
 
         for(JsonObject device : data){
             int realDeviceId = device.get("deviceId").getAsInt();
-            if(!databaseCheckDeviceExistence(realDeviceId)) {
+            String gatewayName = device.get("gateway").getAsString();
+            if(!databaseCheckDeviceExistence(realDeviceId, gatewayName)) {
                 System.out.println("Device not found in DB. The gateway configuration is not up to date.");
                 continue;
             }
@@ -104,7 +107,7 @@ public class DataFilter implements Runnable {
                     continue;
                 }
 
-                Pair<Integer,String> sensorData = databaseGetSensorLogicalIdAndType(realDeviceId, realSensorId);
+                Pair<Integer,String> sensorData = databaseGetSensorLogicalIdAndType(realDeviceId, realSensorId, gatewayName);
                 int sensorValue = sensor.get("data").getAsInt();
 
                 PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts " +
@@ -129,6 +132,8 @@ public class DataFilter implements Runnable {
                         message.setRealSensorId(realSensorId);
                         message.setCurrentThreshold(resultSet.getInt("threshold"));
                         message.setCurrentThresholdType(resultSet.getInt("type"));
+                        message.setCurrentValue(sensorValue);
+                        message.setRealGatewayName(gatewayName);
                         System.out.println(resultSet.getInt("alert_id"));
                         alerts.add(message);
                         databaseUpdateAlert(resultSet.getInt("alert_id"));
@@ -185,13 +190,6 @@ public class DataFilter implements Runnable {
                                                    e che non abbia quella notifica disabilitata
                 - La struttura List<Message> la inoltro con la formattazione automatica al producer Kafka
 
-
-                Nota:
-                - Il controllo attuale viene fatto con un hashmap che verifica se ci sono stati almeno 2 casi
-                  negli ultimi 5 minuti. In caso positivo, si ritiene la registrazione valida, altrimenti no.
-                  Tuttavia questo potrebbe non funzionare con frequenze dati > 5 minuti.
-                - Inoltre, sarebbe da loggare la notifica nella tabella alerts di postgres, segnalando l'ultimo messaggio inviato
-                  così da evitare di ricontattare ogni pochi secondi gli alert, nel caso ci siano più segnalazioni positive.
              */
 
             try {

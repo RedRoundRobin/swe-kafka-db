@@ -3,17 +3,19 @@ package com.redroundrobin.thirema.dbadapter.utils;
 import java.util.List;
 
 public class Message {
-    private static String reqType = "alert";
+    private String reqType = "alert";
     private transient int alertId;
     private transient int entityId;
     private String sensorType;
     private int realDeviceId;
     private int realSensorId;
+    private String realGatewayName;
     private int currentThreshold;
     private int currentThresholdType;
-    private List<String> telegramChatId;
+    private int currentValue;
+    private List<String> telegramChatIds;
 
-    public static String getReqType() {
+    public String getReqType() {
         return reqType;
     }
 
@@ -57,12 +59,12 @@ public class Message {
         this.currentThresholdType = currentThresholdType;
     }
 
-    public List<String> getTelegramChatId() {
-        return telegramChatId;
+    public List<String> getTelegramChatIds() {
+        return telegramChatIds;
     }
 
-    public void setTelegramChatId(List<String> telegramChatId) {
-        this.telegramChatId = telegramChatId;
+    public void setTelegramChatIds(List<String> telegramChatId) {
+        this.telegramChatIds = telegramChatId;
     }
 
     public int getEntityId() {
@@ -79,5 +81,21 @@ public class Message {
 
     public void setSensorType(String sensorType) {
         this.sensorType = sensorType;
+    }
+
+    public int getCurrentValue() {
+        return currentValue;
+    }
+
+    public void setCurrentValue(int currentValue) {
+        this.currentValue = currentValue;
+    }
+
+    public String getRealGatewayName() {
+        return realGatewayName;
+    }
+
+    public void setRealGatewayName(String realGatewayName) {
+        this.realGatewayName = realGatewayName;
     }
 }

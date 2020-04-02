@@ -65,7 +65,7 @@ INSERT INTO "public"."entities" ("entity_id", "name", "location", "deleted") VAL
 INSERT INTO "public"."entities" ("entity_id", "name", "location", "deleted") VALUES ('5', 'Drinks Company', 'Usa', 'false');
 
 -- Administrator Users
-insert into Users (user_id, name, surname, email, password, type) values (1, 'admin', 'istrator', 'admin@admin.it', 'admin', 2);
+insert into Users (user_id, name, surname, email, password, type) values (1, 'Andrea', 'Simion', 'admin@admin.it', 'admin', 2);
 
 -- Coffee Company Users
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (2, 'Kimbra', 'Timmins', 'ktimmins0@purevolume.com', 'password2', 0, 1);
@@ -75,7 +75,7 @@ insert into Users (user_id, name, surname, email, password, type, entity_id) val
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (6, 'Terry', 'Doulton', 'tdoulton4@twitpic.com', 'password6', 1, 1);
 
 -- Stick Company Users
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (7, 'Romola', 'Spoward', 'rspoward5@netlog.com', 'password7', 1, 2);
+insert into Users (user_id, name, surname, email, password, type, entity_id) values (7, 'Donald', 'Trump', 'mod@mod.it', 'mod', 1, 2);
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (8, 'Shane', 'Harrhy', 'sharrhy6@acquirethisname.com', 'password8', 0, 2);
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (9, 'Drucie', 'Stronach', 'dstronach7@berkeley.edu', 'password9', 0, 2);
 
@@ -90,7 +90,7 @@ insert into Users (user_id, name, surname, email, password, type, entity_id) val
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (15,'Mayleen','Turner','Mayleen_Turner4790@deons.tech','password15',0,4);
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (16,'Chris','London','Chris_London8290@muall.tech','password16',0,4);
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (17,'Moira','Eddison','Moira_Eddison6993@zorer.org','password17',0,4);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (18,'Carolyn','Goldsmith','Carolyn_Goldsmith3447@eirey.tech','password18',0,4);
+insert into Users (user_id, name, surname, email, password, type, entity_id) values (18,'Nicholas','Cage','user@user.it','user',0,4);
 
 -- Drinks Company Users
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (19,'Chadwick','Wright','Chadwick_Wright7009@hourpy.biz','password19',0,5);
