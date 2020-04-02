@@ -6,19 +6,26 @@ import com.redroundrobin.thirema.dbadapter.utils.Producer;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 
 public class AdaptersApplication {
+
+    private static final Logger logger = Logger.getLogger(AdaptersApplication.class.getName());
     public static void main(String[] args) {
        try {
+
+           String kafkaBoostrapServers = "localhost:29092";
+
            Database timescale = new Database("jdbc:postgresql://localhost:3456/timescale", "user", "user");
            Database postgre = new Database("jdbc:postgresql://localhost:6543/postgre", "user", "user");
-           Consumer consumerTimescale = new Consumer(Pattern.compile("^gw_.*"), "localhost:29092");
-           Consumer consumerPostgre = new Consumer(Pattern.compile("^gw_.*"), "localhost:29092");
+           Consumer consumerTimescale = new Consumer(Pattern.compile("^gw_.*"), kafkaBoostrapServers);
+           Consumer consumerPostgre = new Consumer(Pattern.compile("^gw_.*"), kafkaBoostrapServers);
            DataInserter inserter;
            DataFilter filter;
-           try (Producer producer = new Producer("alerts", "localhost:29092")) {
+           try (Producer producer = new Producer("alerts", kafkaBoostrapServers)) {
                //Creazione threads
                inserter = new DataInserter(timescale, consumerTimescale);
                filter = new DataFilter(postgre, consumerPostgre, producer);
@@ -26,12 +33,12 @@ public class AdaptersApplication {
            //Creazione executor
            Executor executor = Executors.newCachedThreadPool();
            //Scheduling ed esecuzione dei threads
-           System.out.println("Scheduling runnables");
+           logger.info("Scheduling runnables");
            executor.execute(inserter);
            executor.execute(filter);
-           System.out.println("Done scheduling");
+           logger.info("Done scheduling");
        } catch (Exception e) {
-           e.printStackTrace();
+           logger.log(Level.SEVERE, "Exception occur!", e);
        }
     }
 }

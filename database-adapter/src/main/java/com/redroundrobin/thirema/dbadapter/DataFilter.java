@@ -17,6 +17,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DataFilter implements Runnable {
     private Connection connection;
@@ -24,6 +26,7 @@ public class DataFilter implements Runnable {
     private Consumer consumer;
     private Producer producer;
     private AlertTimeTable alertTimeTable;
+    private static final Logger logger = Logger.getLogger(DataFilter.class.getName());
 
     public DataFilter(Database database, Consumer consumer, Producer producer) {
         this.database = database;
@@ -95,7 +98,7 @@ public class DataFilter implements Runnable {
             int realDeviceId = device.get("deviceId").getAsInt();
             String gatewayName = device.get("gateway").getAsString();
             if(!databaseCheckDeviceExistence(realDeviceId, gatewayName)) {
-                System.out.println("Device not found in DB. The gateway configuration is not up to date.");
+                logger.warning("Device not found in DB. The gateway configuration is not up to date.");
                 continue;
             }
 
@@ -103,7 +106,7 @@ public class DataFilter implements Runnable {
                 JsonObject sensor = jsonSensor.getAsJsonObject();
                 int realSensorId = sensor.get("sensorId").getAsInt();
                 if(!databaseCheckSensorExistence(realSensorId)) {
-                    System.out.println("Sensor not found in DB. The gateway configuration is not up to date.");
+                    logger.warning("Sensor not found in DB. The gateway configuration is not up to date.");
                     continue;
                 }
 
@@ -123,10 +126,11 @@ public class DataFilter implements Runnable {
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while(resultSet.next())
                 {
-                    if(alertTimeTable.verifyAlert(resultSet.getInt("alert_id"))) {
+                    int alertId = resultSet.getInt("alert_id");
+                    if(alertTimeTable.verifyAlert(alertId)) {
                         Message message = new Message();
-                        message.setAlertId(resultSet.getInt("alert_id"));
-                        message.setAlertId(resultSet.getInt("entity_id"));
+                        message.setAlertId(alertId);
+                        message.setEntityId(resultSet.getInt("entity_id"));
                         message.setSensorType(sensorData.getValue());
                         message.setRealDeviceId(realDeviceId);
                         message.setRealSensorId(realSensorId);
@@ -134,9 +138,9 @@ public class DataFilter implements Runnable {
                         message.setCurrentThresholdType(resultSet.getInt("type"));
                         message.setCurrentValue(sensorValue);
                         message.setRealGatewayName(gatewayName);
-                        System.out.println(resultSet.getInt("alert_id"));
+                        logger.log(Level.INFO, "Valid alert: {0}", alertId);
                         alerts.add(message);
-                        databaseUpdateAlert(resultSet.getInt("alert_id"));
+                        databaseUpdateAlert(alertId);
                     }
                 }
                 preparedStatement.close();
@@ -179,8 +183,6 @@ public class DataFilter implements Runnable {
         Gson gson = new Gson();
         while(true) {
             List<JsonObject> records = consumer.fetchMessages();
-            //Filtrare jsonObjects
-            //Produce nel topic alerts
 
             /*
                 Procedimento:
@@ -194,20 +196,18 @@ public class DataFilter implements Runnable {
 
             try {
                 List<Message> messages = filterRealAlerts(records);
-                System.out.print(messages.size());
-                System.out.println(" created after RealAlerts filter");
+                logger.log(Level.INFO, "{0} created after RealAlerts filter", Integer.toString(messages.size()));
                 messages = filterTelegramUsers(messages);
-                System.out.print(messages.size());
-                System.out.println(" created after TelegramUsers filter");
+                logger.log(Level.INFO, "{0} created after TelegramUsers filter", Integer.toString(messages.size()));
                 String jsonMessages = gson.toJson(messages);
-                System.out.println(jsonMessages);
+                logger.info(jsonMessages);
                 produce(jsonMessages);
                 // messaggi da inviare al producer
 
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "SQL Exception occur!", e);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "SQL Exception occur!", e);
             }
 
         }
