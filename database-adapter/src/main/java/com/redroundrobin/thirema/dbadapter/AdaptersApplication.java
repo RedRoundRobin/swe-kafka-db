@@ -16,10 +16,13 @@ public class AdaptersApplication {
            Database postgre = new Database("jdbc:postgresql://localhost:6543/postgre", "user", "user");
            Consumer consumerTimescale = new Consumer(Pattern.compile("^gw_.*"), "localhost:29092");
            Consumer consumerPostgre = new Consumer(Pattern.compile("^gw_.*"), "localhost:29092");
-           Producer producer = new Producer("alerts", "localhost:29092");
-           //Creazione threads
-           DataInserter inserter = new DataInserter(timescale, consumerTimescale);
-           DataFilter filter = new DataFilter(postgre, consumerPostgre, producer);
+           DataInserter inserter;
+           DataFilter filter;
+           try (Producer producer = new Producer("alerts", "localhost:29092")) {
+               //Creazione threads
+               inserter = new DataInserter(timescale, consumerTimescale);
+               filter = new DataFilter(postgre, consumerPostgre, producer);
+           }
            //Creazione executor
            Executor executor = Executors.newCachedThreadPool();
            //Scheduling ed esecuzione dei threads
