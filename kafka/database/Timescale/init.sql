@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS alerts (
 CREATE TABLE IF NOT EXISTS logs (
     time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
     user_id integer NOT NULL,
+    ip_addr varchar(24) NOT NULL,
     operation text NOT NULL,
     data text NULL
 );
