@@ -2,8 +2,16 @@
 
 # Apache Kafka e Database - ThiReMa
 
-:fire: Versione componente: `v0.1.1-dev` 
+:fire: Versione componente: `v0.2.0-dev` 
 
 :pushpin: Main repo: [swe-thirema](https://github.com/Maxelweb/swe-thirema)
 
 ---
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=RedRoundRobin_swe-kafka-db&metric=alert_status)](https://sonarcloud.io/dashboard?id=RedRoundRobin_swe-kafka-db)
+
+![SWE Kafka-DB CI](https://github.com/RedRoundRobin/swe-kafka-db/workflows/SWE%20Kafka-DB%20CI/badge.svg)
+
+![Repository Checker](https://github.com/RedRoundRobin/swe-kafka-db/workflows/Repository%20Checker/badge.svg)
+
+![Docker Checker](https://github.com/RedRoundRobin/swe-kafka-db/workflows/Docker%20Checker/badge.svg)

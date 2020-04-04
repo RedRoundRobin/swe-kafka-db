@@ -1,4 +1,4 @@
-package com.redroundrobin.thirema.dbadapter;
+package com.redroundrobin.thirema.dbadapter.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,7 +20,7 @@ public class Consumer {
     private Pattern topics;
     private org.apache.kafka.clients.consumer.Consumer<Long, String> consumer;
 
-    Consumer(Pattern topics, String boostrapServers) {
+    public Consumer(Pattern topics, String boostrapServers) {
         this.topics = topics;
 
         final Properties properties = new Properties();
