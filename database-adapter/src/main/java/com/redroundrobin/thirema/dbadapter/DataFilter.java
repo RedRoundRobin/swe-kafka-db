@@ -36,10 +36,6 @@ public class DataFilter implements Runnable {
         this.alertTimeTable = new AlertTimeTable();
     }
 
-    private void databaseCommit() throws SQLException {
-        connection.commit();
-    }
-
     private boolean databaseCheckDeviceExistence(int realDeviceId, String gatewayName) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM devices d,gateways g " +
                 "WHERE d.gateway_id=g.gateway_id AND d.real_device_id = ? " +
@@ -88,7 +84,7 @@ public class DataFilter implements Runnable {
         preparedStatement.setInt(1, alertId);
         preparedStatement.executeQuery();
         preparedStatement.close();
-        databaseCommit();
+        connection.commit();
     }
 
     private List<Message> filterRealAlerts(List<JsonObject> data) throws SQLException {
