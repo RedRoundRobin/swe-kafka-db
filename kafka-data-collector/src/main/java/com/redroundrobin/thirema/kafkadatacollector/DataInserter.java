@@ -1,9 +1,9 @@
-package com.redroundrobin.thirema.dbadapter;
+package com.redroundrobin.thirema.kafkadatacollector;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.redroundrobin.thirema.dbadapter.utils.Consumer;
-import com.redroundrobin.thirema.dbadapter.utils.Database;
+import com.redroundrobin.thirema.kafkadatacollector.utils.Consumer;
+import com.redroundrobin.thirema.kafkadatacollector.utils.Database;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -24,7 +24,7 @@ public class DataInserter implements Runnable{
         this.consumer = consumer;
     }
 
-    public void sinkData(@NotNull Connection c, List<JsonObject> data) {
+    private void sinkData(@NotNull Connection c, List<JsonObject> data) {
         Statement stat = null;
         try{
 

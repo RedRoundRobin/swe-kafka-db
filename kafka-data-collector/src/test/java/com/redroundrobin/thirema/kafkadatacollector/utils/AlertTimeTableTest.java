@@ -1,6 +1,6 @@
-package com.redroundrobin.thirema.dbadapter.utils;
+package com.redroundrobin.thirema.kafkadatacollector.utils;
 
-import com.redroundrobin.thirema.dbadapter.models.AlertTimeTable;
+import com.redroundrobin.thirema.kafkadatacollector.models.AlertTimeTable;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -62,4 +62,5 @@ public class AlertTimeTableTest {
         alertTimeTable.verifyAlert(5);
         assertEquals(alertTimeTable.size(), 1);
     }
+
 }

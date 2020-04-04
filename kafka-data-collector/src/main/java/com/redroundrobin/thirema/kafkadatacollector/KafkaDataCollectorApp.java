@@ -1,9 +1,9 @@
-package com.redroundrobin.thirema.dbadapter;
+package com.redroundrobin.thirema.kafkadatacollector;
 
 
-import com.redroundrobin.thirema.dbadapter.utils.Consumer;
-import com.redroundrobin.thirema.dbadapter.utils.Database;
-import com.redroundrobin.thirema.dbadapter.utils.Producer;
+import com.redroundrobin.thirema.kafkadatacollector.utils.Consumer;
+import com.redroundrobin.thirema.kafkadatacollector.utils.Database;
+import com.redroundrobin.thirema.kafkadatacollector.utils.Producer;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -12,12 +12,11 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 
-public class AdaptersApplication {
+public class KafkaDataCollectorApp {
 
-    private static final Logger logger = Logger.getLogger(AdaptersApplication.class.getName());
-    public static void main(String[] args) {
+   public static void main(String[] args) {
+       Logger logger = Logger.getLogger(KafkaDataCollectorApp.class.getName());
        try {
-
            String kafkaBoostrapServers = "localhost:29092";
 
            Database timescale = new Database("jdbc:postgresql://localhost:3456/timescale", "user", "user");
