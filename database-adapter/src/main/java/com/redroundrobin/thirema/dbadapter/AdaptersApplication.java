@@ -14,10 +14,9 @@ import java.util.regex.Pattern;
 
 public class AdaptersApplication {
 
-    private static final Logger logger = Logger.getLogger(AdaptersApplication.class.getName());
-    public static void main(String[] args) {
+   public static void main(String[] args) {
+       Logger logger = Logger.getLogger(AdaptersApplication.class.getName());
        try {
-
            String kafkaBoostrapServers = "localhost:29092";
 
            Database timescale = new Database("jdbc:postgresql://localhost:3456/timescale", "user", "user");

@@ -1,11 +1,9 @@
 package com.redroundrobin.thirema.dbadapter.utils;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
-import java.util.*;
+
 
 public class Database {
     private String address;

@@ -24,7 +24,7 @@ public class DataInserter implements Runnable{
         this.consumer = consumer;
     }
 
-    public void sinkData(@NotNull Connection c, List<JsonObject> data) {
+    private void sinkData(@NotNull Connection c, List<JsonObject> data) {
         Statement stat = null;
         try{
 

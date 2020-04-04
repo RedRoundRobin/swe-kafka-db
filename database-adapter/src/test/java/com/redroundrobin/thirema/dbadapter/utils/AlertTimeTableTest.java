@@ -62,4 +62,5 @@ public class AlertTimeTableTest {
         alertTimeTable.verifyAlert(5);
         assertEquals(alertTimeTable.size(), 1);
     }
+
 }

@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class AlertTimeTable {
 
     private HashMap<Integer, Long> hashMap;
-    private static long minutesDelay = 5*60; // 5 min
+    private long secondsDelay = 300; // 5 minuti
 
     public AlertTimeTable() {
         hashMap = new HashMap<>();
@@ -19,7 +19,7 @@ public class AlertTimeTable {
             long timestamp = hashMap.get(alertId);
 
             // La registrazione è avvenuta 2 volte negli ultimi N minuti
-            if(timestamp > currentTimestamp-minutesDelay)
+            if(timestamp > currentTimestamp-secondsDelay)
             {
                 hashMap.remove(alertId);
                 return true;
@@ -38,4 +38,15 @@ public class AlertTimeTable {
         return hashMap.size();
     }
 
+    public long getSecondsDelay() {
+        return secondsDelay;
+    }
+
+    public void setSecondsDelay(long minutesDelay) {
+        if(minutesDelay < 0)
+        {
+            minutesDelay = 0;
+        }
+        this.secondsDelay = minutesDelay;
+    }
 }
