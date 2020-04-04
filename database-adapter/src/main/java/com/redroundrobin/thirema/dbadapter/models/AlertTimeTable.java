@@ -1,4 +1,4 @@
-package com.redroundrobin.thirema.dbadapter.utils;
+package com.redroundrobin.thirema.dbadapter.models;
 
 import java.sql.Timestamp;
 import java.util.HashMap;

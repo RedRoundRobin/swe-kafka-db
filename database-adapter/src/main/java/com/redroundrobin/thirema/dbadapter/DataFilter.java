@@ -4,9 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import com.redroundrobin.thirema.dbadapter.utils.AlertTimeTable;
+import com.redroundrobin.thirema.dbadapter.utils.Database;
+import com.redroundrobin.thirema.dbadapter.models.AlertTimeTable;
 import com.redroundrobin.thirema.dbadapter.utils.Consumer;
-import com.redroundrobin.thirema.dbadapter.utils.Message;
+import com.redroundrobin.thirema.dbadapter.models.Message;
 import com.redroundrobin.thirema.dbadapter.utils.Producer;
 import javafx.util.Pair;
 
