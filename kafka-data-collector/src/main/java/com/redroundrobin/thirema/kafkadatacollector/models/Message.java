@@ -1,4 +1,4 @@
-package com.redroundrobin.thirema.dbadapter.models;
+package com.redroundrobin.thirema.kafkadatacollector.models;
 
 import java.util.List;
 

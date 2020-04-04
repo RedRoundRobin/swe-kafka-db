@@ -1,4 +1,4 @@
-package com.redroundrobin.thirema.dbadapter.utils;
+package com.redroundrobin.thirema.kafkadatacollector.utils;
 
 import org.jetbrains.annotations.NotNull;
 

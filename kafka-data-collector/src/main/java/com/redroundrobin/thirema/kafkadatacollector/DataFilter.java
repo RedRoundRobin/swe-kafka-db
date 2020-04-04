@@ -1,14 +1,14 @@
-package com.redroundrobin.thirema.dbadapter;
+package com.redroundrobin.thirema.kafkadatacollector;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import com.redroundrobin.thirema.dbadapter.utils.Database;
-import com.redroundrobin.thirema.dbadapter.models.AlertTimeTable;
-import com.redroundrobin.thirema.dbadapter.utils.Consumer;
-import com.redroundrobin.thirema.dbadapter.models.Message;
-import com.redroundrobin.thirema.dbadapter.utils.Producer;
+import com.redroundrobin.thirema.kafkadatacollector.utils.Database;
+import com.redroundrobin.thirema.kafkadatacollector.models.AlertTimeTable;
+import com.redroundrobin.thirema.kafkadatacollector.utils.Consumer;
+import com.redroundrobin.thirema.kafkadatacollector.models.Message;
+import com.redroundrobin.thirema.kafkadatacollector.utils.Producer;
 import javafx.util.Pair;
 
 
