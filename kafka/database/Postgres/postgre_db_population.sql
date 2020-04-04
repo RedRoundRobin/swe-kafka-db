@@ -99,7 +99,20 @@ insert into Users (user_id, name, surname, email, password, type, entity_id) val
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (22,'Jayden','Emmott','Jayden_Emmott282@bauros.biz','password22',0,5);
 insert into Users (user_id, name, surname, email, password, type, entity_id) values (23,'Johnathan','Duvall','Johnathan_Duvall3652@extex.org','password23',0,5);
 
+-- Views 
+insert into Views (view_id, name, user_id) values (1, 'Vista1', 1);
+insert into Views (view_id, name, user_id) values (2, 'Vista2', 1);
+insert into Views (view_id, name, user_id) values (3, 'Vista3', 1);
+insert into Views (view_id, name, user_id) values (4, 'Vista4', 1);
 
+-- ViewGraphs
+
+insert into view_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (1, 0, 1, 1, 2);
+insert into view_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (2, 0, 1, 1, 2);	
+insert into view_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (3, 0, 1, 1, 2);	
+insert into view_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (4, 0, 1, 1, 2);	
+insert into view_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (5, 0, 1, 1, 2);	
+	
 
 -- FOREIGN KEYS Coffee Company - sensors
 INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '3');
