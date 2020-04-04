@@ -2,6 +2,7 @@ package com.redroundrobin.thirema.dbadapter;
 
 
 import com.redroundrobin.thirema.dbadapter.utils.Consumer;
+import com.redroundrobin.thirema.dbadapter.utils.Database;
 import com.redroundrobin.thirema.dbadapter.utils.Producer;
 
 import java.util.concurrent.Executor;

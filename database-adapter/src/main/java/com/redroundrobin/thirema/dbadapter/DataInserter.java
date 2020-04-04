@@ -1,10 +1,14 @@
 package com.redroundrobin.thirema.dbadapter;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.redroundrobin.thirema.dbadapter.utils.Consumer;
+import com.redroundrobin.thirema.dbadapter.utils.Database;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +24,36 @@ public class DataInserter implements Runnable{
         this.consumer = consumer;
     }
 
+    public void sinkData(@NotNull Connection c, List<JsonObject> data) {
+        Statement stat = null;
+        try{
+
+            for(JsonObject record : data) {
+                for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
+                    stat = c.createStatement();
+                    JsonObject sensor = jsonSensor.getAsJsonObject();
+                    System.out.println(sensor.toString());
+                    String insert = "INSERT INTO sensors (sensor_id, device_id, gateway_id, value) VALUES (" +
+                            sensor.get("sensorId").getAsInt()+","+
+                            record.get("deviceId").getAsInt()+","+
+                            "'"+record.get("gateway").getAsString()+"'"+","+
+                            sensor.get("data").getAsDouble()
+                            +");";
+
+                    stat.executeUpdate(insert);
+                    stat.close();
+                    c.commit();
+                }
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Records created successfully");
+    }
+
+
     @Override
     public void run() {
         connection = database.openConnection();
@@ -30,7 +64,7 @@ public class DataInserter implements Runnable{
         }
         while(true){
             List<JsonObject> records = consumer.fetchMessages();
-            database.sinkData(connection, records);
+            this.sinkData(connection, records);
         }
     }
 }

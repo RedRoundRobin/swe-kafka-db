@@ -1,5 +1,6 @@
 package com.redroundrobin.thirema.dbadapter.utils;
 
+import com.redroundrobin.thirema.dbadapter.models.AlertTimeTable;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
