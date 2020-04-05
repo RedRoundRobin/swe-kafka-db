@@ -65,53 +65,53 @@ INSERT INTO "public"."entities" ("entity_id", "name", "location", "deleted") VAL
 INSERT INTO "public"."entities" ("entity_id", "name", "location", "deleted") VALUES ('5', 'Drinks Company', 'Usa', 'false');
 
 -- Administrator Users
-insert into Users (user_id, name, surname, email, password, type) values (1, 'Andrea', 'Simion', 'admin@admin.it', 'admin', 2);
+insert into users (user_id, name, surname, email, password, type) values (1, 'Andrea', 'Simion', 'admin@admin.it', 'admin', 2);
 
--- Coffee Company Users
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (2, 'Kimbra', 'Timmins', 'ktimmins0@purevolume.com', 'password2', 0, 1);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (3, 'Adelind', 'Cambell', 'acambell1@wisc.edu', 'password3', 0, 1);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (4, 'Essy', 'Sims', 'esims2@wordpress.org', 'password4', 0, 1);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (5, 'Bernadette', 'Dufore', 'bdufore3@answers.com', 'password5', 0, 1);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (6, 'Terry', 'Doulton', 'tdoulton4@twitpic.com', 'password6', 1, 1);
+-- Coffee Company users
+insert into users (user_id, name, surname, email, password, type, entity_id) values (2, 'Kimbra', 'Timmins', 'ktimmins0@purevolume.com', 'password2', 0, 1);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (3, 'Adelind', 'Cambell', 'acambell1@wisc.edu', 'password3', 0, 1);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (4, 'Essy', 'Sims', 'esims2@wordpress.org', 'password4', 0, 1);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (5, 'Bernadette', 'Dufore', 'bdufore3@answers.com', 'password5', 0, 1);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (6, 'Terry', 'Doulton', 'tdoulton4@twitpic.com', 'password6', 1, 1);
 
--- Stick Company Users
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (7, 'Donald', 'Trump', 'mod@mod.it', 'mod', 1, 2);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (8, 'Shane', 'Harrhy', 'sharrhy6@acquirethisname.com', 'password8', 0, 2);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (9, 'Drucie', 'Stronach', 'dstronach7@berkeley.edu', 'password9', 0, 2);
+-- Stick Company users
+insert into users (user_id, name, surname, email, password, type, entity_id) values (7, 'Donald', 'Trump', 'mod@mod.it', 'mod', 1, 2);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (8, 'Shane', 'Harrhy', 'sharrhy6@acquirethisname.com', 'password8', 0, 2);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (9, 'Drucie', 'Stronach', 'dstronach7@berkeley.edu', 'password9', 0, 2);
 
--- Plastic Cups Company Users
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (10, 'Rosalinda', 'Glencross', 'rglencross8@bloglovin.com', 'password10', 1, 3);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (11, 'Goddart', 'Ellwell', 'gellwell9@xing.com', 'password11', 0, 3);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (12, 'Ortensia', 'Kording', 'okordinga@toplist.cz', 'password12', 0, 3);
+-- Plastic Cups Company users
+insert into users (user_id, name, surname, email, password, type, entity_id) values (10, 'Rosalinda', 'Glencross', 'rglencross8@bloglovin.com', 'password10', 1, 3);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (11, 'Goddart', 'Ellwell', 'gellwell9@xing.com', 'password11', 0, 3);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (12, 'Ortensia', 'Kording', 'okordinga@toplist.cz', 'password12', 0, 3);
 
--- Snack Company Users
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (13,'Roger','Darcy','Roger_Darcy1647@yahoo.com','password13',1,4);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (14,'Kieth','Lindop','Kieth_Lindop5965@cispeto.com','password14',0,4);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (15,'Mayleen','Turner','Mayleen_Turner4790@deons.tech','password15',0,4);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (16,'Chris','London','Chris_London8290@muall.tech','password16',0,4);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (17,'Moira','Eddison','Moira_Eddison6993@zorer.org','password17',0,4);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (18,'Nicholas','Cage','user@user.it','user',0,4);
+-- Snack Company users
+insert into users (user_id, name, surname, email, password, type, entity_id) values (13,'Roger','Darcy','Roger_Darcy1647@yahoo.com','password13',1,4);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (14,'Kieth','Lindop','Kieth_Lindop5965@cispeto.com','password14',0,4);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (15,'Mayleen','Turner','Mayleen_Turner4790@deons.tech','password15',0,4);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (16,'Chris','London','Chris_London8290@muall.tech','password16',0,4);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (17,'Moira','Eddison','Moira_Eddison6993@zorer.org','password17',0,4);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (18,'Nicholas','Cage','user@user.it','user',0,4);
 
--- Drinks Company Users
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (19,'Chadwick','Wright','Chadwick_Wright7009@hourpy.biz','password19',0,5);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (20,'William','Stevens','William_Stevens2369@ubusive.com','password20',1,5);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (21,'Oliver','Rixon','Oliver_Rixon3216@bungar.biz','password21',0,5);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (22,'Jayden','Emmott','Jayden_Emmott282@bauros.biz','password22',0,5);
-insert into Users (user_id, name, surname, email, password, type, entity_id) values (23,'Johnathan','Duvall','Johnathan_Duvall3652@extex.org','password23',0,5);
+-- Drinks Company users
+insert into users (user_id, name, surname, email, password, type, entity_id) values (19,'Chadwick','Wright','Chadwick_Wright7009@hourpy.biz','password19',0,5);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (20,'William','Stevens','William_Stevens2369@ubusive.com','password20',1,5);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (21,'Oliver','Rixon','Oliver_Rixon3216@bungar.biz','password21',0,5);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (22,'Jayden','Emmott','Jayden_Emmott282@bauros.biz','password22',0,5);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (23,'Johnathan','Duvall','Johnathan_Duvall3652@extex.org','password23',0,5);
 
--- Views 
-insert into Views (view_id, name, user_id) values (1, 'Vista1', 1);
-insert into Views (view_id, name, user_id) values (2, 'Vista2', 1);
-insert into Views (view_id, name, user_id) values (3, 'Vista3', 1);
-insert into Views (view_id, name, user_id) values (4, 'Vista4', 1);
+-- views 
+insert into views (view_id, name, user_id) values (1, 'Vista1', 1);
+insert into views (view_id, name, user_id) values (2, 'Vista2', 1);
+insert into views (view_id, name, user_id) values (3, 'Vista3', 1);
+insert into views (view_id, name, user_id) values (4, 'Vista4', 1);
 
 -- ViewGraphs
 
-insert into view_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (1, 0, 1, 1, 2);
-insert into view_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (2, 0, 1, 1, 2);	
-insert into view_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (3, 0, 1, 1, 2);	
-insert into view_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (4, 0, 1, 1, 2);	
-insert into view_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (5, 0, 1, 1, 2);	
+insert into views_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (1, 0, 1, 1, 2);
+insert into views_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (2, 0, 1, 1, 2);	
+insert into views_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (3, 0, 1, 1, 2);	
+insert into views_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (4, 0, 1, 1, 2);	
+insert into views_graphs (graph_id, correlation, view_id, sensor_1_id, sensor_2_id) values (5, 0, 1, 1, 2);	
 	
 
 -- FOREIGN KEYS Coffee Company - sensors
