@@ -27,6 +27,7 @@ public class DataFilter implements Runnable {
     private Consumer consumer;
     private Producer producer;
     private AlertTimeTable alertTimeTable;
+    private String topicName = "alerts";
     private static final Logger logger = Logger.getLogger(DataFilter.class.getName());
 
     public DataFilter(Database database, Consumer consumer, Producer producer) {
@@ -165,10 +166,6 @@ public class DataFilter implements Runnable {
         return messages;
     }
 
-    private void produce(String messages) throws Exception {
-        producer.executeProducer("alerts", messages);
-    }
-
     @Override
     public void run() {
         connection = database.openConnection();
@@ -188,7 +185,6 @@ public class DataFilter implements Runnable {
                 - Chiamo il filterTelegramUser --> esegue il controllo di chi deve essere notificato
                                                    e che non abbia quella notifica disabilitata
                 - La struttura List<Message> la inoltro con la formattazione automatica al producer Kafka
-
              */
 
             try {
@@ -198,8 +194,7 @@ public class DataFilter implements Runnable {
                 logger.log(Level.INFO, "{0} created after TelegramUsers filter", Integer.toString(messages.size()));
                 String jsonMessages = gson.toJson(messages);
                 logger.info(jsonMessages);
-                produce(jsonMessages);
-                // messaggi da inviare al producer
+                producer.executeProducer(topicName, jsonMessages);
 
             } catch (SQLException e) {
                 logger.log(Level.SEVERE, "SQL Exception occur!", e);
@@ -210,4 +205,11 @@ public class DataFilter implements Runnable {
         }
     }
 
+    public String getTopicName() {
+        return topicName;
+    }
+
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
+    }
 }
