@@ -27,6 +27,7 @@ public class DataFilter implements Runnable {
     private Consumer consumer;
     private Producer producer;
     private AlertTimeTable alertTimeTable;
+    private String topicName = "alerts";
     private static final Logger logger = Logger.getLogger(DataFilter.class.getName());
 
     public DataFilter(Database database, Consumer consumer, Producer producer) {
@@ -193,7 +194,7 @@ public class DataFilter implements Runnable {
                 logger.log(Level.INFO, "{0} created after TelegramUsers filter", Integer.toString(messages.size()));
                 String jsonMessages = gson.toJson(messages);
                 logger.info(jsonMessages);
-                producer.executeProducer("alerts", jsonMessages);
+                producer.executeProducer(topicName, jsonMessages);
 
             } catch (SQLException e) {
                 logger.log(Level.SEVERE, "SQL Exception occur!", e);
@@ -204,4 +205,11 @@ public class DataFilter implements Runnable {
         }
     }
 
+    public String getTopicName() {
+        return topicName;
+    }
+
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
+    }
 }
