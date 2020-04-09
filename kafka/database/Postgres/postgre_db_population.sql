@@ -150,4 +150,41 @@ INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('5', '2
 
 
 
+-- Coffeee Company Alerts
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (1, 10, 1, 4, 1);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (2, 10, 1, 7, 1);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (3, 10, 1, 14, 1);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (4, 10, 1, 18, 1);
+
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (5, 5, 1, 3, 1);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (6, 5, 1, 10, 1);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (7, 5, 1, 13, 1);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (8, 5, 1, 17, 1);
+
+-- Stick Company Alerts
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (9, 15, 1, 1, 2);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (10, 15, 1, 5, 2);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (11, 15, 1, 8, 2);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (12, 15, 1, 11, 2);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (13, 15, 1, 15, 2);
+
+-- Plastic Cups Company Alerts
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (14, 15, 1, 2, 3);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (15, 15, 1, 6, 3);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (16, 15, 1, 9, 3);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (17, 15, 1, 12, 3);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (18, 15, 1, 16, 3);
+
+-- Snack Company users
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (19, 3, 1, 19, 4);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (20, 3, 1, 20, 4);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (21, 3, 1, 21, 4);
+
+-- Drink Company Alerts
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (22, 3, 1, 22, 5);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (23, 3, 1, 23, 5);
+INSERT INTO "public"."alerts" ("alert_id","threshold","type","sensor_id","entity_id") VALUES (24, 3, 1, 24, 5);
+
+
+
 
