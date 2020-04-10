@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DataInserter implements Runnable{
-    private Connection connection;
-    private Database database;
-    private Consumer consumer;
+public class DataInserter implements Runnable {
+    private final Database database;
+    private final Consumer consumer;
+
     private static final Logger logger = Logger.getLogger(DataInserter.class.getName());
 
     public DataInserter(Database database, Consumer consumer) {
@@ -25,44 +25,39 @@ public class DataInserter implements Runnable{
     }
 
     private void sinkData(@NotNull Connection c, List<JsonObject> data) {
-        Statement stat = null;
-        try{
-
-            for(JsonObject record : data) {
-                for(JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
-                    stat = c.createStatement();
+        for (JsonObject record : data) {
+            for (JsonElement jsonSensor : record.get("sensors").getAsJsonArray()) {
+                try (Statement statement = c.createStatement()) {
                     JsonObject sensor = jsonSensor.getAsJsonObject();
-                    System.out.println(sensor.toString());
+                    logger.log(Level.INFO, sensor::toString);
                     String insert = "INSERT INTO sensors (sensor_id, device_id, gateway_id, value) VALUES (" +
-                            sensor.get("sensorId").getAsInt()+","+
-                            record.get("deviceId").getAsInt()+","+
-                            "'"+record.get("gateway").getAsString()+"'"+","+
+                            sensor.get("sensorId").getAsInt() + "," +
+                            record.get("deviceId").getAsInt() + "," +
+                            "'" + record.get("gateway").getAsString() + "'" + "," +
                             sensor.get("data").getAsDouble()
-                            +");";
+                            + ");";
 
-                    stat.executeUpdate(insert);
-                    stat.close();
+                    statement.executeUpdate(insert);
                     c.commit();
                 }
+                catch (SQLException e) {
+                    logger.log(Level.SEVERE, "SQL Exception occur!", e);
+                }
             }
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        System.out.println("Records created successfully");
+        logger.log(Level.INFO, "Records created successfully");
     }
 
 
     @Override
     public void run() {
-        connection = database.openConnection();
+        Connection connection = database.openConnection();
         try {
             connection.setAutoCommit(false);
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "SQL Exception occur!", e);
         }
-        while(true){
+        while (true) {
             List<JsonObject> records = consumer.fetchMessages();
             this.sinkData(connection, records);
         }

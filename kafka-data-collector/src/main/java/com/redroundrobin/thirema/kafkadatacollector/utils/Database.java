@@ -3,12 +3,16 @@ package com.redroundrobin.thirema.kafkadatacollector.utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Database {
-    private String address;
-    private String username;
-    private String password;
+    private final String address;
+    private final String username;
+    private final String password;
+
+    private static final Logger logger = Logger.getLogger(Database.class.getName());
 
     public Database(String address, String username, String password) {
         this.address = address;
@@ -16,17 +20,17 @@ public class Database {
         this.password = password;
     }
 
-    public Connection openConnection() {   //RICORDARSI DI CHIUDERE LA CONNESSIONE
+    public Connection openConnection() { // RICORDARSI DI CHIUDERE LA CONNESSIONE
         Connection c = null;
         try {
             c = DriverManager
                     .getConnection(address, username, password);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            logger.log(Level.SEVERE, "Exception occurs!", e);
+            logger.log(Level.SEVERE, () -> e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        System.out.println("Opened database successfully");
+        logger.log(Level.INFO, "Opened database successfully");
         return c;
     }
 
@@ -36,7 +40,7 @@ public class Database {
             resultSet.next();
             res = resultSet.getInt(1) > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurs!", e);
         }
         preparedStatement.close();
         return res;

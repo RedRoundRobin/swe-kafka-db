@@ -11,20 +11,24 @@ import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import static org.apache.kafka.server.quota.ClientQuotaEntity.ConfigEntityType.CLIENT_ID;
 
-public class Consumer {
-    private Pattern topics;
-    private org.apache.kafka.clients.consumer.Consumer<Long, String> consumer;
+public class Consumer implements AutoCloseable {
+    private final org.apache.kafka.clients.consumer.Consumer<Long, String> kafkaConsumer;
 
-    public Consumer(Pattern topics, String boostrapServers) {
-        this.topics = topics;
+    private static final Logger logger = Logger.getLogger(Consumer.class.getName());
 
+    public Consumer(Pattern topics, String bootstrapServers) {
         final Properties properties = new Properties();
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, boostrapServers);
+
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 2000);
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, CLIENT_ID.toString());
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
@@ -32,23 +36,24 @@ public class Consumer {
 
         org.apache.kafka.clients.consumer.Consumer<Long, String> consumer = new KafkaConsumer<>(properties);
         consumer.subscribe(topics);
-        this.consumer = consumer;
+        this.kafkaConsumer = consumer;
     }
 
+    @Override
     public void close(){
-        System.out.println("[Consumer] Closed");
-        consumer.close();
+        logger.log(Level.INFO, "[Consumer] Closed");
+        kafkaConsumer.close();
     }
 
     public List<JsonObject> fetchMessages() {
-        System.out.println("[Consumer] Started");
+        logger.log(Level.INFO, "[Consumer] Started");
 
         List<JsonObject> devicesData = new ArrayList<>();
 
-        final ConsumerRecords<Long, String> consumerRecords = consumer.poll(Duration.ofSeconds(4));
+        final ConsumerRecords<Long, String> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(4));
 
         if (consumerRecords.count() == 0) {
-            System.out.println("[Consumer] Zero messages found");
+            logger.log(Level.INFO, "[Consumer] Zero messages found");
             return devicesData;
         }
 

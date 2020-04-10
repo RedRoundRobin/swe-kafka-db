@@ -9,14 +9,16 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Producer implements AutoCloseable {
 
-    private org.apache.kafka.clients.producer.Producer<Long, String> producer;
-    private String name;
+    private final org.apache.kafka.clients.producer.Producer<Long, String> kafkaProducer;
+
+    private static final Logger logger = Logger.getLogger(Producer.class.getName());
 
     public Producer(String name, String bootstrapServers) {
-        this.name = name;
 
         Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -24,29 +26,24 @@ public class Producer implements AutoCloseable {
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
-        producer = new KafkaProducer<>(properties);
+        kafkaProducer = new KafkaProducer<>(properties);
     }
 
     // Viene eseguito il produttore specificato che invia il messaggio nel topic specificato
-    public void executeProducer(String topic, String message) throws Exception {
+    public void executeProducer(String topic, String message) throws InterruptedException {
         long timestamp = System.currentTimeMillis();
         final CountDownLatch countDownLatch = new CountDownLatch(1);
 
         try {
             final ProducerRecord<Long, String> record = new ProducerRecord<>(topic, timestamp, message);
 
-            producer.send(record, (metadata, exception) -> {
+            kafkaProducer.send(record, (metadata, exception) -> {
                 long timeSpent = System.currentTimeMillis() - timestamp;
 
                 if (metadata != null) {
-                    System.out.printf("Sent record (chiave = %s, valore = %s) with metadata (partizione = %d, offset = %d) and timestamp = %d\n",
-                            record.key(),
-                            record.value(),
-                            metadata.partition(),
-                            metadata.offset(),
-                            timeSpent);
+                    logger.log(Level.INFO, () -> "Sent record (chiave = " + record.key() + ", valore = " + record.value() + ") with metadata (partizione = " + metadata.partition() + ", offset = " + metadata.offset() + ") and timestamp = " + timeSpent + "%n");
                 } else {
-                    exception.printStackTrace();
+                    logger.log(Level.SEVERE, "Exception occurs!", exception);
                 }
 
                 countDownLatch.countDown();
@@ -54,13 +51,13 @@ public class Producer implements AutoCloseable {
 
             countDownLatch.await(25, TimeUnit.SECONDS);
         } finally {
-            producer.flush();
-            System.out.println("Message sent!");
+            kafkaProducer.flush();
+            logger.log(Level.INFO,"Message sent!");
         }
     }
 
     @Override
     public void close() {
-        producer.close();
+        kafkaProducer.close();
     }
 }

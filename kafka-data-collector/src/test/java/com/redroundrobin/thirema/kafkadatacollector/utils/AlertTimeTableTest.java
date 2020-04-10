@@ -10,7 +10,7 @@ public class AlertTimeTableTest {
     @Test
     public void NoMemberInside() {
         AlertTimeTable alertTimeTable = new AlertTimeTable();
-        assertEquals(alertTimeTable.size(), 0);
+        assertEquals(0, alertTimeTable.size());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class AlertTimeTableTest {
         alertTimeTable.verifyAlert(3);
         alertTimeTable.verifyAlert(3);
         alertTimeTable.verifyAlert(4);
-        assertEquals(alertTimeTable.size(), 3);
+        assertEquals(3, alertTimeTable.size());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class AlertTimeTableTest {
         alertTimeTable.verifyAlert(4);
         alertTimeTable.clear();
         alertTimeTable.verifyAlert(5);
-        assertEquals(alertTimeTable.size(), 1);
+        assertEquals(1, alertTimeTable.size());
     }
 
 }

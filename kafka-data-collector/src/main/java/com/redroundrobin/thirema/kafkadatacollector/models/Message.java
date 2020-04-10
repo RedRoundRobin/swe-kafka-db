@@ -1,9 +1,10 @@
 package com.redroundrobin.thirema.kafkadatacollector.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Message {
-    private String reqType = "alert";
+public class Message implements Serializable {
+    private final String reqType;
     private transient int alertId;
     private transient int entityId;
     private String sensorType;
@@ -15,8 +16,8 @@ public class Message {
     private int currentValue;
     private List<String> telegramChatIds;
 
-    public String getReqType() {
-        return reqType;
+    public Message() {
+        reqType = "alert";
     }
 
     public int getAlertId() {
@@ -27,44 +28,20 @@ public class Message {
         this.alertId = alertId;
     }
 
-    public int getRealDeviceId() {
-        return realDeviceId;
-    }
-
     public void setRealDeviceId(int realDeviceId) {
         this.realDeviceId = realDeviceId;
-    }
-
-    public int getRealSensorId() {
-        return realSensorId;
     }
 
     public void setRealSensorId(int realSensorId) {
         this.realSensorId = realSensorId;
     }
 
-    public int getCurrentThreshold() {
-        return currentThreshold;
-    }
-
     public void setCurrentThreshold(int currentThreshold) {
         this.currentThreshold = currentThreshold;
     }
 
-    public int getCurrentThresholdType() {
-        return currentThresholdType;
-    }
-
     public void setCurrentThresholdType(int currentThresholdType) {
         this.currentThresholdType = currentThresholdType;
-    }
-
-    public List<String> getTelegramChatIds() {
-        return telegramChatIds;
-    }
-
-    public void setTelegramChatIds(List<String> telegramChatId) {
-        this.telegramChatIds = telegramChatId;
     }
 
     public int getEntityId() {
@@ -75,24 +52,12 @@ public class Message {
         this.entityId = entityId;
     }
 
-    public String getSensorType() {
-        return sensorType;
-    }
-
     public void setSensorType(String sensorType) {
         this.sensorType = sensorType;
     }
 
-    public int getCurrentValue() {
-        return currentValue;
-    }
-
     public void setCurrentValue(int currentValue) {
         this.currentValue = currentValue;
-    }
-
-    public String getRealGatewayName() {
-        return realGatewayName;
     }
 
     public void setRealGatewayName(String realGatewayName) {

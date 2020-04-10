@@ -23,11 +23,11 @@ import java.util.logging.Logger;
 
 public class DataFilter implements Runnable {
     private Connection connection;
-    private Database database;
-    private Consumer consumer;
-    private Producer producer;
-    private AlertTimeTable alertTimeTable;
-    private String topicName = "alerts";
+    private final Database database;
+    private final Consumer consumer;
+    private final Producer producer;
+    private final AlertTimeTable alertTimeTable;
+
     private static final Logger logger = Logger.getLogger(DataFilter.class.getName());
 
     public DataFilter(Database database, Consumer consumer, Producer producer) {
@@ -38,71 +38,68 @@ public class DataFilter implements Runnable {
     }
 
     private boolean databaseCheckDeviceExistence(int realDeviceId, String gatewayName) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM devices d,gateways g " +
-                "WHERE d.gateway_id=g.gateway_id AND d.real_device_id = ? " +
-                "AND g.name = ? LIMIT 1");
-        preparedStatement.setInt(1, realDeviceId);
-        preparedStatement.setString(2, gatewayName);
-        boolean result = database.findData(preparedStatement);
-        return result;
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM devices d, gateways g WHERE d.gateway_id=g.gateway_id AND d.real_device_id = ? AND g.name = ? LIMIT 1")) {
+            preparedStatement.setInt(1, realDeviceId);
+            preparedStatement.setString(2, gatewayName);
+            return database.findData(preparedStatement);
+        }
     }
 
     private boolean databaseCheckSensorExistence(int realSensorId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM sensors " +
-                "WHERE real_sensor_id = ? LIMIT 1");
-        preparedStatement.setInt(1, realSensorId);
-        boolean result = database.findData(preparedStatement);
-        return result;
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM sensors WHERE real_sensor_id = ? LIMIT 1")) {
+            preparedStatement.setInt(1, realSensorId);
+            return database.findData(preparedStatement);
+        }
     }
 
     private boolean databaseCheckDisabledAlert(int userId, int alertId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM disabled_users_alerts " +
-                "WHERE user_id = ? AND alert_id = ? LIMIT 1");
-        preparedStatement.setInt(1, userId);
-        preparedStatement.setInt(2, alertId);
-        boolean result = database.findData(preparedStatement);
-        return result;
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM disabled_users_alerts WHERE user_id = ? AND alert_id = ? LIMIT 1")) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, alertId);
+            return database.findData(preparedStatement);
+        }
     }
 
     private Pair<Integer,String> databaseGetSensorLogicalIdAndType(int realDeviceId, int realSensorId, String gatewayName) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT sensor_id, type " +
-                "FROM sensors_devices_view " +
-                "WHERE real_device_id = ? AND real_sensor_id = ? AND g.name = ? LIMIT 1");
-        preparedStatement.setInt(1, realDeviceId);
-        preparedStatement.setInt(2, realSensorId);
-        preparedStatement.setString(3, gatewayName);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        resultSet.next();
-        int logicalSensorId = resultSet.getInt("sensor_id");
-        String sensorType = resultSet.getString("type");
-        preparedStatement.close();
-        return new Pair<>(logicalSensorId, sensorType);
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT sensor_id, type FROM sensors_devices_view WHERE real_device_id = ? AND real_sensor_id = ? AND g.name = ? LIMIT 1")) {
+            preparedStatement.setInt(1, realDeviceId);
+            preparedStatement.setInt(2, realSensorId);
+            preparedStatement.setString(3, gatewayName);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                resultSet.next();
+
+                int logicalSensorId = resultSet.getInt("sensor_id");
+                String sensorType = resultSet.getString("type");
+
+                return new Pair<>(logicalSensorId, sensorType);
+            }
+        }
     }
 
     private void databaseUpdateAlert(int alertId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = NOW() " +
-                "WHERE alert_id = ? LIMIT 1");
-        preparedStatement.setInt(1, alertId);
-        preparedStatement.executeQuery();
-        preparedStatement.close();
-        connection.commit();
+        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = NOW() WHERE alert_id = ? LIMIT 1")) {
+            preparedStatement.setInt(1, alertId);
+            preparedStatement.executeQuery();
+            connection.commit();
+        }
     }
 
     private List<Message> filterRealAlerts(List<JsonObject> data) throws SQLException {
-
         List<Message> alerts = new ArrayList<>();
 
-        for(JsonObject device : data){
+        for (JsonObject device : data) {
             int realDeviceId = device.get("deviceId").getAsInt();
             String gatewayName = device.get("gateway").getAsString();
-            if(!databaseCheckDeviceExistence(realDeviceId, gatewayName)) {
+
+            if (!databaseCheckDeviceExistence(realDeviceId, gatewayName)) {
                 logger.warning("Device not found in DB. The gateway configuration is not up to date.");
                 continue;
             }
 
-            for(JsonElement jsonSensor : device.get("sensors").getAsJsonArray()) {
+            for (JsonElement jsonSensor : device.get("sensors").getAsJsonArray()) {
                 JsonObject sensor = jsonSensor.getAsJsonObject();
                 int realSensorId = sensor.get("sensorId").getAsInt();
+
                 if(!databaseCheckSensorExistence(realSensorId)) {
                     logger.warning("Sensor not found in DB. The gateway configuration is not up to date.");
                     continue;
@@ -111,37 +108,37 @@ public class DataFilter implements Runnable {
                 Pair<Integer,String> sensorData = databaseGetSensorLogicalIdAndType(realDeviceId, realSensorId, gatewayName);
                 int sensorValue = sensor.get("data").getAsInt();
 
-                PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts " +
-                        "WHERE (sensor_id = ? AND deleted = 0 " +
-                        "AND last_sent < (NOW() - '10 minutes'::interval) ) AND" +
-                        "((type = 0 AND ? > threshold) OR " +
-                        "(type = 1 AND ? < threshold) OR " +
-                        "(type = 2 AND ? = threshold)) ");
-                preparedStatement.setInt(1, sensorData.getKey());
-                preparedStatement.setInt(2, sensorValue);
-                preparedStatement.setInt(3, sensorValue);
-                preparedStatement.setInt(4, sensorValue);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                while(resultSet.next())
-                {
-                    int alertId = resultSet.getInt("alert_id");
-                    if(alertTimeTable.verifyAlert(alertId)) {
-                        Message message = new Message();
-                        message.setAlertId(alertId);
-                        message.setEntityId(resultSet.getInt("entity_id"));
-                        message.setSensorType(sensorData.getValue());
-                        message.setRealDeviceId(realDeviceId);
-                        message.setRealSensorId(realSensorId);
-                        message.setCurrentThreshold(resultSet.getInt("threshold"));
-                        message.setCurrentThresholdType(resultSet.getInt("type"));
-                        message.setCurrentValue(sensorValue);
-                        message.setRealGatewayName(gatewayName);
-                        logger.log(Level.INFO, "Valid alert: {0}", alertId);
-                        alerts.add(message);
-                        databaseUpdateAlert(alertId);
+                try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts WHERE (sensor_id = ? AND deleted = 0 AND last_sent < (NOW() - '10 minutes'::interval) ) AND ((type = 0 AND ? > threshold) OR (type = 1 AND ? < threshold) OR (type = 2 AND ? = threshold)) ")) {
+                    preparedStatement.setInt(1, sensorData.getKey());
+                    preparedStatement.setInt(2, sensorValue);
+                    preparedStatement.setInt(3, sensorValue);
+                    preparedStatement.setInt(4, sensorValue);
+
+                    try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                        while (resultSet.next()) {
+                            int alertId = resultSet.getInt("alert_id");
+
+                            if (alertTimeTable.verifyAlert(alertId)) {
+                                Message message = new Message();
+
+                                message.setAlertId(alertId);
+                                message.setEntityId(resultSet.getInt("entity_id"));
+                                message.setSensorType(sensorData.getValue());
+                                message.setRealDeviceId(realDeviceId);
+                                message.setRealSensorId(realSensorId);
+                                message.setCurrentThreshold(resultSet.getInt("threshold"));
+                                message.setCurrentThresholdType(resultSet.getInt("type"));
+                                message.setCurrentValue(sensorValue);
+                                message.setRealGatewayName(gatewayName);
+
+                                logger.log(Level.INFO, "Valid alert: {0}", alertId);
+
+                                alerts.add(message);
+                                databaseUpdateAlert(alertId);
+                            }
+                        }
                     }
                 }
-                preparedStatement.close();
             }
         }
 
@@ -149,30 +146,30 @@ public class DataFilter implements Runnable {
     }
 
     private List<Message> filterTelegramUsers(List<Message> messages) throws SQLException {
-        for(Message message : messages){
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT user_id,telegram_chat FROM users " +
-                    "WHERE deleted = 0 AND telegram_name IS NOT NULL AND telegram_chat IS NOT NULL " +
-                    "AND entity_id= ?");
-            preparedStatement.setInt(1, message.getEntityId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            List<String> telegramChats = new ArrayList<>();
-            while(resultSet.next()){
-                if(!databaseCheckDisabledAlert(resultSet.getInt("user_id"), message.getAlertId()))
-                {
-                    telegramChats.add(resultSet.getString("telegram_chat"));
+        List<Message> telegramChats = new ArrayList<>();
+        for (Message message : messages) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT user_id, telegram_chat FROM users WHERE deleted = 0 AND telegram_name IS NOT NULL AND telegram_chat IS NOT NULL AND entity_id= ?")) {
+                preparedStatement.setInt(1, message.getEntityId());
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        if (!databaseCheckDisabledAlert(resultSet.getInt("user_id"), message.getAlertId())) {
+                            telegramChats.add(message);
+                        }
+                    }
                 }
             }
         }
-        return messages;
+        return telegramChats;
     }
 
     @Override
     public void run() {
+        String topicName = "alerts";
         connection = database.openConnection();
         try {
             connection.setAutoCommit(false);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "SQL Exception occurs!", e);
         }
         Gson gson = new Gson();
         while(true) {
@@ -198,18 +195,9 @@ public class DataFilter implements Runnable {
 
             } catch (SQLException e) {
                 logger.log(Level.SEVERE, "SQL Exception occur!", e);
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "SQL Exception occur!", e);
+            } catch (InterruptedException e) {
+                logger.log(Level.SEVERE, "Interrupted Exception occur!", e);
             }
-
         }
-    }
-
-    public String getTopicName() {
-        return topicName;
-    }
-
-    public void setTopicName(String topicName) {
-        this.topicName = topicName;
     }
 }
