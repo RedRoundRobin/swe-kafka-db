@@ -6,36 +6,36 @@ import java.util.Map;
 
 public class AlertTimeTable {
 
-    private final Map<Integer, Long> hashMap;
-    private final long secondsDelay;
+  private final Map<Integer, Long> hashMap;
+  private final long secondsDelay;
 
-    public AlertTimeTable() {
-        hashMap = new HashMap<>();
-        secondsDelay = 300; // 5 minuti
+  public AlertTimeTable() {
+    hashMap = new HashMap<>();
+    secondsDelay = 300; // 5 minuti
+  }
+
+  public boolean verifyAlert(int alertId) {
+    long currentTimestamp = new Timestamp(System.currentTimeMillis()).getTime();
+
+    if (hashMap.containsKey(alertId)) {
+      long timestamp = hashMap.get(alertId);
+
+      // La registrazione è avvenuta 2 volte negli ultimi N minuti
+      if (timestamp > currentTimestamp - secondsDelay) {
+        hashMap.remove(alertId);
+        return true;
+      }
     }
 
-    public boolean verifyAlert(int alertId) {
-        long currentTimestamp = new Timestamp(System.currentTimeMillis()).getTime();
+    hashMap.put(alertId, currentTimestamp);
+    return false;
+  }
 
-        if (hashMap.containsKey(alertId)) {
-            long timestamp = hashMap.get(alertId);
+  public void clear() {
+    hashMap.clear();
+  }
 
-            // La registrazione è avvenuta 2 volte negli ultimi N minuti
-            if (timestamp > currentTimestamp-secondsDelay) {
-                hashMap.remove(alertId);
-                return true;
-            }
-        }
-
-        hashMap.put(alertId, currentTimestamp);
-        return false;
-    }
-
-    public void clear() {
-        hashMap.clear();
-    }
-
-    public int size() {
-        return hashMap.size();
-    }
+  public int size() {
+    return hashMap.size();
+  }
 }
