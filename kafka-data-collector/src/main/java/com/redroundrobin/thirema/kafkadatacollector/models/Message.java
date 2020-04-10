@@ -1,101 +1,110 @@
 package com.redroundrobin.thirema.kafkadatacollector.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Message {
-    private String reqType = "alert";
-    private transient int alertId;
-    private transient int entityId;
-    private String sensorType;
-    private int realDeviceId;
-    private int realSensorId;
-    private String realGatewayName;
-    private int currentThreshold;
-    private int currentThresholdType;
-    private int currentValue;
-    private List<String> telegramChatIds;
+public class Message implements Serializable {
+  private String reqType;
+  private transient int alertId;
+  private transient int entityId;
+  private String sensorType;
+  private int realDeviceId;
+  private int realSensorId;
+  private String realGatewayName;
+  private int currentThreshold;
+  private int currentThresholdType;
+  private int currentValue;
+  private List<String> telegramChatIds;
 
-    public String getReqType() {
-        return reqType;
-    }
+  public Message() {
+    reqType = "alert";
+  }
 
-    public int getAlertId() {
-        return alertId;
-    }
+  public String getReqType() {
+    return reqType;
+  }
 
-    public void setAlertId(int alertId) {
-        this.alertId = alertId;
-    }
+  public int getAlertId() {
+    return alertId;
+  }
 
-    public int getRealDeviceId() {
-        return realDeviceId;
-    }
+  public int getEntityId() {
+    return entityId;
+  }
 
-    public void setRealDeviceId(int realDeviceId) {
-        this.realDeviceId = realDeviceId;
-    }
+  public String getSensorType() {
+    return sensorType;
+  }
 
-    public int getRealSensorId() {
-        return realSensorId;
-    }
+  public int getRealDeviceId() {
+    return realDeviceId;
+  }
 
-    public void setRealSensorId(int realSensorId) {
-        this.realSensorId = realSensorId;
-    }
+  public int getRealSensorId() {
+    return realSensorId;
+  }
 
-    public int getCurrentThreshold() {
-        return currentThreshold;
-    }
+  public String getRealGatewayName() {
+    return realGatewayName;
+  }
 
-    public void setCurrentThreshold(int currentThreshold) {
-        this.currentThreshold = currentThreshold;
-    }
+  public int getCurrentThreshold() {
+    return currentThreshold;
+  }
 
-    public int getCurrentThresholdType() {
-        return currentThresholdType;
-    }
+  public int getCurrentThresholdType() {
+    return currentThresholdType;
+  }
 
-    public void setCurrentThresholdType(int currentThresholdType) {
-        this.currentThresholdType = currentThresholdType;
-    }
+  public int getCurrentValue() {
+    return currentValue;
+  }
 
-    public List<String> getTelegramChatIds() {
-        return telegramChatIds;
-    }
+  public List<String> getTelegramChatIds() {
+    return telegramChatIds;
+  }
 
-    public void setTelegramChatIds(List<String> telegramChatId) {
-        this.telegramChatIds = telegramChatId;
-    }
+  public void setReqType(String reqType) {
+    this.reqType = reqType;
+  }
 
-    public int getEntityId() {
-        return entityId;
-    }
+  public void setAlertId(int alertId) {
+    this.alertId = alertId;
+  }
 
-    public void setEntityId(int entityId) {
-        this.entityId = entityId;
-    }
+  public void setRealDeviceId(int realDeviceId) {
+    this.realDeviceId = realDeviceId;
+  }
 
-    public String getSensorType() {
-        return sensorType;
-    }
+  public void setRealSensorId(int realSensorId) {
+    this.realSensorId = realSensorId;
+  }
 
-    public void setSensorType(String sensorType) {
-        this.sensorType = sensorType;
-    }
+  public void setCurrentThreshold(int currentThreshold) {
+    this.currentThreshold = currentThreshold;
+  }
 
-    public int getCurrentValue() {
-        return currentValue;
-    }
+  public void setCurrentThresholdType(int currentThresholdType) {
+    this.currentThresholdType = currentThresholdType;
+  }
 
-    public void setCurrentValue(int currentValue) {
-        this.currentValue = currentValue;
-    }
+  public void setEntityId(int entityId) {
+    this.entityId = entityId;
+  }
 
-    public String getRealGatewayName() {
-        return realGatewayName;
-    }
+  public void setSensorType(String sensorType) {
+    this.sensorType = sensorType;
+  }
 
-    public void setRealGatewayName(String realGatewayName) {
-        this.realGatewayName = realGatewayName;
-    }
+  public void setCurrentValue(int currentValue) {
+    this.currentValue = currentValue;
+  }
+
+  public void setRealGatewayName(String realGatewayName) {
+    this.realGatewayName = realGatewayName;
+  }
+
+  public void setTelegramChatIds(List<String> telegramChatIds) {
+    this.telegramChatIds = telegramChatIds;
+  }
 }
