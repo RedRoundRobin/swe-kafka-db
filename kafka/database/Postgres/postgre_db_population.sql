@@ -1,26 +1,26 @@
 -- GATEWAYS
 INSERT INTO "public"."gateways" ("gateway_id", "name") VALUES ('1', 'US-GATEWAY-1');
-INSERT INTO "public"."gateways" ("gateway_id", "name") VALUES ('2', 'DE-GATEWAY-1');
-INSERT INTO "public"."gateways" ("gateway_id", "name") VALUES ('3', 'SG-GATEWAY-1');
+INSERT INTO "public"."gateways" ("gateway_id", "name") VALUES ('2', 'DE-GATEWAY-2');
+INSERT INTO "public"."gateways" ("gateway_id", "name") VALUES ('3', 'SG-GATEWAY-3');
 
 
 -- US GATEWAY-1 Devices
-INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('1', '1', 'US-COFFEE-MACHINE-1', '60', '1');
-INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('2', '2', 'US-COFFEE-MACHINE-2', '60', '1');
+INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('1', '1', 'COFFEE-MACHINE-1', '5', '1');
+INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('2', '2', 'COFFEE-MACHINE-2', '7', '1');
 
-INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('6', '3', 'US-SNACK-MACHINE-1', '60', '1');
+INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('6', '3', 'SNACK-MACHINE-1', '10', '1');
 
 -- DE GATEWAY-1 Devices
-INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('3', '1', 'DE-COFFEE-MACHINE-1', '60', '2');
-INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('4', '2', 'DE-COFFEE-MACHINE-2', '60', '2');
+INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('3', '1', 'DE-COFFEE-MACHINE-1', '5', '2');
+INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('4', '2', 'DE-COFFEE-MACHINE-2', '5', '2');
 
 -- SG GATEWAY-1 Devices
-INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('5', '1', 'SG-COFFEE-MACHINE-1', '60', '3');
+INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('5', '1', 'SG-COFFEE-MACHINE-1', '5', '3');
 
 
 
 -- US Coffee Machine 1 Sensors
-INSERT INTO "public"."sensors" ("sensor_id", "real_sensor_id", "type", "device_id") VALUES ('1', '1', 'stick', '1');
+INSERT INTO "public"."sensors" ("sensor_id", "real_sensor_id", "type", "device_id") VALUES ('1', '1', 'sticks', '1');
 INSERT INTO "public"."sensors" ("sensor_id", "real_sensor_id", "type", "device_id") VALUES ('2', '2', 'plastic cups', '1');
 INSERT INTO "public"."sensors" ("sensor_id", "real_sensor_id", "type", "device_id") VALUES ('3', '3', 'cappuccino', '1');
 INSERT INTO "public"."sensors" ("sensor_id", "real_sensor_id", "type", "device_id") VALUES ('4', '4', 'espresso', '1');
@@ -68,14 +68,14 @@ INSERT INTO "public"."entities" ("entity_id", "name", "location", "deleted") VAL
 insert into users (user_id, name, surname, email, password, type) values (1, 'Andrea', 'Simion', 'admin@admin.it', 'admin', 2);
 
 -- Coffee Company users
-insert into users (user_id, name, surname, email, password, type, entity_id) values (2, 'Kimbra', 'Timmins', 'ktimmins0@purevolume.com', 'password2', 0, 1);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (2, 'Mario', 'Rossi', 'mario@rossi.it', 'mariorossi', 0, 1);
 insert into users (user_id, name, surname, email, password, type, entity_id) values (3, 'Adelind', 'Cambell', 'acambell1@wisc.edu', 'password3', 0, 1);
 insert into users (user_id, name, surname, email, password, type, entity_id) values (4, 'Essy', 'Sims', 'esims2@wordpress.org', 'password4', 0, 1);
-insert into users (user_id, name, surname, email, password, type, entity_id) values (5, 'Bernadette', 'Dufore', 'bdufore3@answers.com', 'password5', 0, 1);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (5, 'Gloria', 'Brown', 'mod@mod.it', 'mod', 0, 1);
 insert into users (user_id, name, surname, email, password, type, entity_id) values (6, 'Terry', 'Doulton', 'tdoulton4@twitpic.com', 'password6', 1, 1);
 
 -- Stick Company users
-insert into users (user_id, name, surname, email, password, type, entity_id) values (7, 'Donald', 'Trump', 'mod@mod.it', 'mod', 1, 2);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (7, 'Donald', 'Trump', 'mod2@mod2.it', 'mod2', 1, 2);
 insert into users (user_id, name, surname, email, password, type, entity_id) values (8, 'Shane', 'Harrhy', 'sharrhy6@acquirethisname.com', 'password8', 0, 2);
 insert into users (user_id, name, surname, email, password, type, entity_id) values (9, 'Drucie', 'Stronach', 'dstronach7@berkeley.edu', 'password9', 0, 2);
 
@@ -90,7 +90,7 @@ insert into users (user_id, name, surname, email, password, type, entity_id) val
 insert into users (user_id, name, surname, email, password, type, entity_id) values (15,'Mayleen','Turner','Mayleen_Turner4790@deons.tech','password15',0,4);
 insert into users (user_id, name, surname, email, password, type, entity_id) values (16,'Chris','London','Chris_London8290@muall.tech','password16',0,4);
 insert into users (user_id, name, surname, email, password, type, entity_id) values (17,'Moira','Eddison','Moira_Eddison6993@zorer.org','password17',0,4);
-insert into users (user_id, name, surname, email, password, type, entity_id) values (18,'Nicholas','Cage','user@user.it','user',0,4);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (18,'Nicholas','Cage','user2@user2.it','user2',0,4);
 
 -- Drinks Company users
 insert into users (user_id, name, surname, email, password, type, entity_id) values (19,'Chadwick','Wright','Chadwick_Wright7009@hourpy.biz','password19',0,5);
