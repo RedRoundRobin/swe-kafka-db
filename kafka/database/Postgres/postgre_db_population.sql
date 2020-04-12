@@ -71,7 +71,7 @@ insert into users (user_id, name, surname, email, password, type) values (1, 'An
 insert into users (user_id, name, surname, email, password, type, entity_id) values (2, 'Mario', 'Rossi', 'mario@rossi.it', 'mariorossi', 0, 1);
 insert into users (user_id, name, surname, email, password, type, entity_id) values (3, 'Adelind', 'Cambell', 'acambell1@wisc.edu', 'password3', 0, 1);
 insert into users (user_id, name, surname, email, password, type, entity_id) values (4, 'Essy', 'Sims', 'esims2@wordpress.org', 'password4', 0, 1);
-insert into users (user_id, name, surname, email, password, type, entity_id) values (5, 'Gloria', 'Brown', 'mod@mod.it', 'mod', 0, 1);
+insert into users (user_id, name, surname, email, password, type, entity_id) values (5, 'Gloria', 'Brown', 'mod@mod.it', 'mod', 1, 1);
 insert into users (user_id, name, surname, email, password, type, entity_id) values (6, 'Terry', 'Doulton', 'tdoulton4@twitpic.com', 'password6', 1, 1);
 
 -- Stick Company users
