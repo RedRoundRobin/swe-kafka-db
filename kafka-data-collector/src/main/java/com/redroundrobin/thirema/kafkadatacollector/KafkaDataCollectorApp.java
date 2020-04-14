@@ -3,6 +3,8 @@ package com.redroundrobin.thirema.kafkadatacollector;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Consumer;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Database;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Producer;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -13,6 +15,11 @@ public class KafkaDataCollectorApp {
 
   public static void main(String[] args) {
     Logger logger = Logger.getLogger(KafkaDataCollectorApp.class.getName());
+
+    // used to not show the logs of kafka
+    ch.qos.logback.classic.Logger kafkaLogger =
+        (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+    kafkaLogger.setLevel(ch.qos.logback.classic.Level.OFF);
 
     String kafkaBootstrapServers = "localhost:29092";
 
