@@ -21,10 +21,10 @@ public class KafkaDataCollectorApp {
         (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
     kafkaLogger.setLevel(ch.qos.logback.classic.Level.OFF);
 
-    String kafkaBootstrapServers = "kafka_core:29092";
+    String kafkaBootstrapServers = "kafka-core:29092";
 
-    Database timescale = new Database("jdbc:postgresql://db_timescale:3456/timescale", "user", "user");
-    Database postgre = new Database("jdbc:postgresql://db_postgre:6543/postgre", "user", "user");
+    Database timescale = new Database("jdbc:postgresql://db-timescale:5432/timescale", "user", "user");
+    Database postgre = new Database("jdbc:postgresql://db-postgre:5432/postgre", "user", "user");
 
     try {
       Consumer consumerInserter = new Consumer(Pattern.compile("^gw_.*"), kafkaBootstrapServers);
