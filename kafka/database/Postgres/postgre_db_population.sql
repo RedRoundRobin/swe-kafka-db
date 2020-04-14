@@ -1,5 +1,5 @@
 -- GATEWAYS
-INSERT INTO "public"."gateways" ("gateway_id", "name") VALUES ('1', 'US-GATEWAY-1');
+INSERT INTO "public"."gateways" ("gateway_id", "name") VALUES ('1', 'gw_US-GATEWAY-1');
 
 -- US GATEWAY-1 Devices
 INSERT INTO "public"."devices" ("device_id", "real_device_id", "name", "frequency", "gateway_id") VALUES ('1', '1', 'WATER-MACHINE', '5', '1');

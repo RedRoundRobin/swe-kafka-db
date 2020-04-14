@@ -105,7 +105,7 @@ public class DataFilter implements Runnable {
         Pair<Integer, String> sensorData = databaseGetSensorLogicalIdAndType(realDeviceId, realSensorId, gatewayName);
         int sensorValue = sensor.get("data").getAsInt();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts WHERE (sensor_id = ? AND deleted = 0 AND last_sent < (NOW() - '10 minutes'::interval) ) AND ((type = 0 AND ? > threshold) OR (type = 1 AND ? < threshold) OR (type = 2 AND ? = threshold)) ")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts WHERE (sensor_id = ? AND deleted = false AND ((last_sent < (NOW() - '10 minutes'::interval)) OR (last_sent IS NULL))) AND ((type = 0 AND ? > threshold) OR (type = 1 AND ? < threshold) OR (type = 2 AND ? = threshold)) ")) {
           preparedStatement.setInt(1, sensorData.getKey());
           preparedStatement.setInt(2, sensorValue);
           preparedStatement.setInt(3, sensorValue);
@@ -145,7 +145,7 @@ public class DataFilter implements Runnable {
   private List<Message> filterTelegramUsers(List<Message> messages) throws SQLException {
     List<Message> telegramChats = new ArrayList<>();
     for (Message message : messages) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT user_id, telegram_chat FROM users WHERE deleted = 0 AND telegram_name IS NOT NULL AND telegram_chat IS NOT NULL AND entity_id= ?")) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT user_id, telegram_chat FROM users WHERE deleted = false AND telegram_name IS NOT NULL AND telegram_chat IS NOT NULL AND entity_id= ?")) {
         preparedStatement.setInt(1, message.getEntityId());
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
           while (resultSet.next()) {
@@ -183,12 +183,14 @@ public class DataFilter implements Runnable {
 
       try {
         List<Message> messages = filterRealAlerts(records);
-        logger.log(Level.INFO, "{0} created after RealAlerts filter", Integer.toString(messages.size()));
+        List<Message> finalMessages = messages;
+        logger.log(Level.INFO, () -> finalMessages.size() + " created after RealAlerts filter");
         messages = filterTelegramUsers(messages);
-        logger.log(Level.INFO, "{0} created after TelegramUsers filter", Integer.toString(messages.size()));
+        List<Message> finalMessages1 = messages;
+        logger.log(Level.INFO, () -> finalMessages1.size() + " created after TelegramUsers filter");
         String jsonMessages = gson.toJson(messages);
         logger.info(jsonMessages);
-        if (messages.size() > 0) {
+        if (!messages.isEmpty()) {
           producer.executeProducer(topicName, jsonMessages);
         }
 
