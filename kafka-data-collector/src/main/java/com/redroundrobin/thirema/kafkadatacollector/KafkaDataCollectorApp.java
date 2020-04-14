@@ -23,8 +23,8 @@ public class KafkaDataCollectorApp {
 
     String kafkaBootstrapServers = "kafka_core:29092";
 
-    Database timescale = new Database("jdbc:postgresql://db_timescale:3456/timescale", "user", "user");
-    Database postgre = new Database("jdbc:postgresql://db_postgre:6543/postgre", "user", "user");
+    Database timescale = new Database("jdbc:postgresql://core.host.redroundrobin.site:3456/timescale", "user", "user");
+    Database postgre = new Database("jdbc:postgresql://core.host.redroundrobin.site:6543/postgre", "user", "user");
 
     try {
       Consumer consumerInserter = new Consumer(Pattern.compile("^gw_.*"), kafkaBootstrapServers);
