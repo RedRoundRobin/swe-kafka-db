@@ -5,7 +5,7 @@ IFS='
 
 if [ ! -f /usr/src/data-collector/kafka-data-collector.jar ]; then
 
-	cd tmp/kafka-data-collector
+	cd kafka-data-collector
 
 	mvn clean package
 
