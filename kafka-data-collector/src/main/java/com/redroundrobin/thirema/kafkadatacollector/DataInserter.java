@@ -29,7 +29,7 @@ public class DataInserter implements Runnable {
         try (Statement statement = c.createStatement()) {
           JsonObject sensor = jsonSensor.getAsJsonObject();
           logger.log(Level.INFO, sensor::toString);
-          String insert = "INSERT INTO sensors (sensor_id, device_id, gateway_id, value) VALUES ("
+          String insert = "INSERT INTO sensors (real_sensor_id, real_device_id, gateway_name, value) VALUES ("
               + sensor.get("sensorId").getAsInt() + ","
               + record.get("deviceId").getAsInt() + ","
               + "'" + record.get("gateway").getAsString() + "'" + ","

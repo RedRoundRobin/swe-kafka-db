@@ -19,9 +19,10 @@ public class KafkaDataCollectorApp {
     Database timescale = new Database("jdbc:postgresql://localhost:3456/timescale", "user", "user");
     Database postgre = new Database("jdbc:postgresql://localhost:6543/postgre", "user", "user");
 
-    try (Consumer consumerInserter = new Consumer(Pattern.compile("^gw_.*"), kafkaBootstrapServers);
-         Consumer consumerFilter = new Consumer(Pattern.compile("^gw_.*"), kafkaBootstrapServers);
-         Producer producer = new Producer("alerts", kafkaBootstrapServers)) {
+    try {
+      Consumer consumerInserter = new Consumer(Pattern.compile("^gw_.*"), kafkaBootstrapServers);
+      Consumer consumerFilter = new Consumer(Pattern.compile("^gw_.*"), kafkaBootstrapServers);
+      Producer producer = new Producer("alerts", kafkaBootstrapServers);
 
       // Creazione thread
       DataInserter inserter = new DataInserter(timescale, consumerInserter);
