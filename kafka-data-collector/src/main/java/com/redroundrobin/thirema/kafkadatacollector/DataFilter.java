@@ -188,7 +188,9 @@ public class DataFilter implements Runnable {
         logger.log(Level.INFO, "{0} created after TelegramUsers filter", Integer.toString(messages.size()));
         String jsonMessages = gson.toJson(messages);
         logger.info(jsonMessages);
-        producer.executeProducer(topicName, jsonMessages);
+        if (messages.size() > 0) {
+          producer.executeProducer(topicName, jsonMessages);
+        }
 
       } catch (SQLException e) {
         logger.log(Level.SEVERE, "SQL Exception occur!", e);
