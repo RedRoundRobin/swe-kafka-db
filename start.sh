@@ -9,7 +9,7 @@ if [ ! -f /usr/src/data-collector/kafka-data-collector.jar ]; then
 
 	mvn clean package
 
-	mv ./target/kafka-data-collector*.jar ../../kafka-data-collector.jar
+	mv -f target/kafka-data-collector*.jar ../../kafka-data-collector.jar
 	cd ../..
 	rm -rf tmp 
 	
