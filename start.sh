@@ -1,11 +1,16 @@
-@g#!/bin/sh
-cd kafka-data-collector
+#!/bin/sh
 
-mvn clean package
+if [ ! -f /usr/src/data-collector/kafka-data-collector.jar ]; then
 
-mv ./target/kafka-data-collector*.jar ../../kafka-data-collector.jar
-cd ../..
-rm -rf tmp 
+	cd tmp/kafka-data-collector
+
+	mvn clean package
+
+	mv ./target/kafka-data-collector*.jar ../../kafka-data-collector.jar
+	cd ../..
+	rm -rf tmp 
+	
+fi
 
 java -jar /usr/src/data-collector/kafka-data-collector.jar
 
