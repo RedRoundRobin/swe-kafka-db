@@ -171,7 +171,7 @@ public class DataFilter implements Runnable {
     Gson gson = new Gson();
     while (true) {
       List<JsonObject> records = consumer.fetchMessages();
-
+      logger.log(Level.INFO, () -> records.size() + " created after TelegramUsers filter");
       /*
           Procedimento:
           - Chiamo il filterAlerts --> mi ritorna una lista di alerts filtrati e validi, senza gli utenti telegram
