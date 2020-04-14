@@ -1,5 +1,8 @@
 #!/bin/sh
 
+IFS='
+'
+
 if [ ! -f /usr/src/data-collector/kafka-data-collector.jar ]; then
 
 	cd tmp/kafka-data-collector
