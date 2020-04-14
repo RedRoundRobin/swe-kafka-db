@@ -28,6 +28,7 @@ public class DataFilter implements Runnable {
   private static final Logger logger = Logger.getLogger(DataFilter.class.getName());
 
   public DataFilter(Database database, Consumer consumer, Producer producer) {
+    logger.setLevel(Level.ALL);
     this.database = database;
     this.consumer = consumer;
     this.producer = producer;
