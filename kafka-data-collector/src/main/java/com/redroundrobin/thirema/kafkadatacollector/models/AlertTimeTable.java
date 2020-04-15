@@ -26,10 +26,9 @@ public class AlertTimeTable {
         return true;
       }
     } else {
-      return true;
+      hashMap.put(alertId, currentTimestamp);
     }
 
-    hashMap.put(alertId, currentTimestamp);
     return false;
   }
 

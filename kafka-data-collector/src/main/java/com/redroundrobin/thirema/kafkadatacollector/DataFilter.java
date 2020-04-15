@@ -44,9 +44,11 @@ public class DataFilter implements Runnable {
     }
   }
 
-  private boolean databaseCheckSensorExistence(int realSensorId) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM sensors WHERE real_sensor_id = ? LIMIT 1")) {
-      preparedStatement.setInt(1, realSensorId);
+  private boolean databaseCheckSensorExistence(String gatewayName, int realDeviceId, int realSensorId) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM sensors_devices_view WHERE name = ? AND real_device_id = ? AND real_sensor_id = ? LIMIT 1")) {
+      preparedStatement.setString(1, gatewayName);
+      preparedStatement.setInt(2, realDeviceId);
+      preparedStatement.setInt(3, realSensorId);
       return database.findData(preparedStatement);
     }
   }
@@ -99,7 +101,7 @@ public class DataFilter implements Runnable {
         JsonObject sensor = jsonSensor.getAsJsonObject();
         int realSensorId = sensor.get("sensorId").getAsInt();
 
-        if (!databaseCheckSensorExistence(realSensorId)) {
+        if (!databaseCheckSensorExistence(gatewayName, realDeviceId, realSensorId)) {
           logger.warning("Sensor not found in DB. The gateway configuration is not up to date.");
           continue;
         }
