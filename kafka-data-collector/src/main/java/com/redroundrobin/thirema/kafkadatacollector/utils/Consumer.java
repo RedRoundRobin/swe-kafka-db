@@ -22,7 +22,8 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 public class Consumer implements AutoCloseable {
   private final org.apache.kafka.clients.consumer.Consumer<Long, String> kafkaConsumer;
 
-  private static final Logger logger = Logger.getLogger(Consumer.class.getName());
+  private static final Logger logger = CustomLogger.getLogger(Consumer.class.getName(),
+      Level.WARNING);
 
   public Consumer(Pattern topics, String bootstrapServers) {
     final Properties properties = new Properties();
@@ -30,6 +31,20 @@ public class Consumer implements AutoCloseable {
     properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     properties.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 2000);
     properties.put(ConsumerConfig.GROUP_ID_CONFIG, CLIENT_ID.toString());
+    properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
+    properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+
+    org.apache.kafka.clients.consumer.Consumer<Long, String> consumer = new KafkaConsumer<>(properties);
+    consumer.subscribe(topics);
+    this.kafkaConsumer = consumer;
+  }
+
+  public Consumer(Pattern topics, String bootstrapServers, String groupId) {
+    final Properties properties = new Properties();
+
+    properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    properties.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 2000);
+    properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
     properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
     properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 

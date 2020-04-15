@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.redroundrobin.thirema.kafkadatacollector.models.AlertTimeTable;
 import com.redroundrobin.thirema.kafkadatacollector.models.Message;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Consumer;
+import com.redroundrobin.thirema.kafkadatacollector.utils.CustomLogger;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Database;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Producer;
 import java.sql.Connection;
@@ -25,10 +26,10 @@ public class DataFilter implements Runnable {
   private final Producer producer;
   private final AlertTimeTable alertTimeTable;
 
-  private static final Logger logger = Logger.getLogger(DataFilter.class.getName());
+  private static final Logger logger = CustomLogger.getLogger(DataFilter.class.getName(),
+      Level.INFO);
 
   public DataFilter(Database database, Consumer consumer, Producer producer) {
-    logger.setLevel(Level.ALL);
     this.database = database;
     this.consumer = consumer;
     this.producer = producer;
@@ -43,9 +44,11 @@ public class DataFilter implements Runnable {
     }
   }
 
-  private boolean databaseCheckSensorExistence(int realSensorId) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM sensors WHERE real_sensor_id = ? LIMIT 1")) {
-      preparedStatement.setInt(1, realSensorId);
+  private boolean databaseCheckSensorExistence(String gatewayName, int realDeviceId, int realSensorId) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM sensors_devices_view WHERE name = ? AND real_device_id = ? AND real_sensor_id = ? LIMIT 1")) {
+      preparedStatement.setString(1, gatewayName);
+      preparedStatement.setInt(2, realDeviceId);
+      preparedStatement.setInt(3, realSensorId);
       return database.findData(preparedStatement);
     }
   }
@@ -59,7 +62,7 @@ public class DataFilter implements Runnable {
   }
 
   private Pair<Integer, String> databaseGetSensorLogicalIdAndType(int realDeviceId, int realSensorId, String gatewayName) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT sensor_id, type FROM sensors_devices_view WHERE real_device_id = ? AND real_sensor_id = ? AND g.name = ? LIMIT 1")) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT sensor_id, type FROM sensors_devices_view WHERE real_device_id = ? AND real_sensor_id = ? AND name = ? LIMIT 1")) {
       preparedStatement.setInt(1, realDeviceId);
       preparedStatement.setInt(2, realSensorId);
       preparedStatement.setString(3, gatewayName);
@@ -75,9 +78,9 @@ public class DataFilter implements Runnable {
   }
 
   private void databaseUpdateAlert(int alertId) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = NOW() WHERE alert_id = ? LIMIT 1")) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = NOW() WHERE alert_id = ?")) {
       preparedStatement.setInt(1, alertId);
-      preparedStatement.executeQuery();
+      preparedStatement.executeUpdate();
       connection.commit();
     }
   }
@@ -98,7 +101,7 @@ public class DataFilter implements Runnable {
         JsonObject sensor = jsonSensor.getAsJsonObject();
         int realSensorId = sensor.get("sensorId").getAsInt();
 
-        if (!databaseCheckSensorExistence(realSensorId)) {
+        if (!databaseCheckSensorExistence(gatewayName, realDeviceId, realSensorId)) {
           logger.warning("Sensor not found in DB. The gateway configuration is not up to date.");
           continue;
         }
@@ -172,7 +175,7 @@ public class DataFilter implements Runnable {
     Gson gson = new Gson();
     while (true) {
       List<JsonObject> records = consumer.fetchMessages();
-      logger.log(Level.INFO, () -> records.size() + " created after TelegramUsers filter");
+      logger.log(Level.INFO, () -> records.size() + " kafka records received");
       /*
           Procedimento:
           - Chiamo il filterAlerts --> mi ritorna una lista di alerts filtrati e validi, senza gli utenti telegram
@@ -182,23 +185,25 @@ public class DataFilter implements Runnable {
           - La struttura List<Message> la inoltro con la formattazione automatica al producer Kafka
        */
 
-      try {
-        List<Message> messages = filterRealAlerts(records);
-        List<Message> finalMessages = messages;
-        logger.log(Level.INFO, () -> finalMessages.size() + " created after RealAlerts filter");
-        messages = filterTelegramUsers(messages);
-        List<Message> finalMessages1 = messages;
-        logger.log(Level.INFO, () -> finalMessages1.size() + " created after TelegramUsers filter");
-        String jsonMessages = gson.toJson(messages);
-        logger.info(jsonMessages);
-        if (!messages.isEmpty()) {
-          producer.executeProducer(topicName, jsonMessages);
-        }
+      if (records.size() > 0) {
+        try {
+          List<Message> messages = filterRealAlerts(records);
+          List<Message> finalMessages = messages;
+          logger.log(Level.INFO, () -> finalMessages.size() + " messages created after RealAlerts filter");
+          messages = filterTelegramUsers(messages);
+          List<Message> finalMessages1 = messages;
+          logger.log(Level.INFO, () -> finalMessages1.size() + " messages created after TelegramUsers filter");
+          String jsonMessages = gson.toJson(messages);
+          if (!messages.isEmpty()) {
+            logger.fine(jsonMessages);
+            producer.executeProducer(topicName, jsonMessages);
+          }
 
-      } catch (SQLException e) {
-        logger.log(Level.SEVERE, "SQL Exception occur!", e);
-      } catch (InterruptedException e) {
-        logger.log(Level.SEVERE, "Interrupted Exception occur!", e);
+        } catch (SQLException e) {
+          logger.log(Level.SEVERE, "SQL Exception occurs!", e);
+        } catch (InterruptedException e) {
+          logger.log(Level.SEVERE, "Interrupted Exception occur!", e);
+        }
       }
     }
   }

@@ -14,7 +14,7 @@ public class Database {
   private final String username;
   private final String password;
 
-  private static final Logger logger = Logger.getLogger(Database.class.getName());
+  private static final Logger logger = CustomLogger.getLogger(Database.class.getName());
 
   public Database(String address, String username, String password) {
     this.address = address;
