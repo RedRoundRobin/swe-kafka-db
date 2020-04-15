@@ -3,6 +3,7 @@ package com.redroundrobin.thirema.kafkadatacollector;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Consumer;
+import com.redroundrobin.thirema.kafkadatacollector.utils.CustomLogger;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Database;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,7 +17,8 @@ public class DataInserter implements Runnable {
   private final Database database;
   private final Consumer consumer;
 
-  private static final Logger logger = Logger.getLogger(DataInserter.class.getName());
+  private static final Logger logger = CustomLogger.getLogger(DataInserter.class.getName(),
+      Level.INFO);
 
   public DataInserter(Database database, Consumer consumer) {
     this.database = database;

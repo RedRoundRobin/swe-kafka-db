@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.redroundrobin.thirema.kafkadatacollector.models.AlertTimeTable;
 import com.redroundrobin.thirema.kafkadatacollector.models.Message;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Consumer;
+import com.redroundrobin.thirema.kafkadatacollector.utils.CustomLogger;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Database;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Producer;
 import java.sql.Connection;
@@ -25,7 +26,8 @@ public class DataFilter implements Runnable {
   private final Producer producer;
   private final AlertTimeTable alertTimeTable;
 
-  private static final Logger logger = Logger.getLogger(DataFilter.class.getName());
+  private static final Logger logger = CustomLogger.getLogger(DataFilter.class.getName(),
+      Level.INFO);
 
   public DataFilter(Database database, Consumer consumer, Producer producer) {
     this.database = database;

@@ -1,6 +1,7 @@
 package com.redroundrobin.thirema.kafkadatacollector;
 
 import com.redroundrobin.thirema.kafkadatacollector.utils.Consumer;
+import com.redroundrobin.thirema.kafkadatacollector.utils.CustomLogger;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Database;
 import com.redroundrobin.thirema.kafkadatacollector.utils.Producer;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
 public class KafkaDataCollectorApp {
 
   public static void main(String[] args) {
-    Logger logger = Logger.getLogger(KafkaDataCollectorApp.class.getName());
+    Logger logger = CustomLogger.getLogger(KafkaDataCollectorApp.class.getName());
 
     // used to not show the logs of kafka
     ch.qos.logback.classic.Logger kafkaLogger =

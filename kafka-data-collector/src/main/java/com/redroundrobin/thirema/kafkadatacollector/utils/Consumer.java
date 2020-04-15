@@ -22,7 +22,8 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 public class Consumer implements AutoCloseable {
   private final org.apache.kafka.clients.consumer.Consumer<Long, String> kafkaConsumer;
 
-  private static final Logger logger = Logger.getLogger(Consumer.class.getName());
+  private static final Logger logger = CustomLogger.getLogger(Consumer.class.getName(),
+      Level.WARNING);
 
   public Consumer(Pattern topics, String bootstrapServers) {
     final Properties properties = new Properties();

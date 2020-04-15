@@ -15,7 +15,8 @@ public class Producer implements AutoCloseable {
 
   private final org.apache.kafka.clients.producer.Producer<Long, String> kafkaProducer;
 
-  private static final Logger logger = Logger.getLogger(Producer.class.getName());
+  private static final Logger logger = CustomLogger.getLogger(Producer.class.getName(),
+      Level.WARNING);
 
   public Producer(String name, String bootstrapServers) {
 
