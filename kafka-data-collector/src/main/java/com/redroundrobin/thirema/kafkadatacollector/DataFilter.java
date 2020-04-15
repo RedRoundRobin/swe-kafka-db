@@ -119,7 +119,7 @@ public class DataFilter implements Runnable {
             while (resultSet.next()) {
               int alertId = resultSet.getInt("alert_id");
 
-              if (alertTimeTable.verifyAlert(alertId)) {
+              //if (alertTimeTable.verifyAlert(alertId)) {
                 Message message = new Message();
 
                 message.setAlertId(alertId);
@@ -136,7 +136,7 @@ public class DataFilter implements Runnable {
 
                 alerts.add(message);
                 databaseUpdateAlert(alertId);
-              }
+              //}
             }
           }
         }
