@@ -38,6 +38,20 @@ public class Consumer implements AutoCloseable {
     this.kafkaConsumer = consumer;
   }
 
+  public Consumer(Pattern topics, String bootstrapServers, String groupId) {
+    final Properties properties = new Properties();
+
+    properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    properties.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 2000);
+    properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+    properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
+    properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+
+    org.apache.kafka.clients.consumer.Consumer<Long, String> consumer = new KafkaConsumer<>(properties);
+    consumer.subscribe(topics);
+    this.kafkaConsumer = consumer;
+  }
+
   @Override
   public void close() {
     logger.log(Level.INFO, "[Consumer] Closed");
