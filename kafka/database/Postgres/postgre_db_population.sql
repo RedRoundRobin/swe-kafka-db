@@ -50,6 +50,7 @@ insert into users (user_id, name, surname, email, password, type, entity_id) val
 INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '1');
 INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '3');
 INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '5');
+INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '4');
 INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '6');
 INSERT INTO "public"."entity_sensors" ("entity_id", "sensor_id") VALUES ('1', '9');
 
