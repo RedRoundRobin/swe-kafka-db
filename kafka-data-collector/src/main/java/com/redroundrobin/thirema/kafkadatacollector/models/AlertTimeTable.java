@@ -15,20 +15,19 @@ public class AlertTimeTable {
   }
 
   public boolean verifyAlert(int alertId) {
-    long currentTimestamp = new Timestamp(System.currentTimeMillis()).getTime();
+    long currentTimestamp = System.currentTimeMillis();
 
     if (hashMap.containsKey(alertId)) {
       long timestamp = hashMap.get(alertId);
 
       // La registrazione è avvenuta 2 volte negli ultimi N minuti
-      if (timestamp > currentTimestamp - secondsDelay) {
+      if (currentTimestamp < timestamp + secondsDelay*1000) {
         hashMap.remove(alertId);
         return true;
       }
-    } else {
-      hashMap.put(alertId, currentTimestamp);
     }
 
+    hashMap.put(alertId, currentTimestamp);
     return false;
   }
 

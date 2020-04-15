@@ -27,7 +27,7 @@ public class DataFilter implements Runnable {
   private final AlertTimeTable alertTimeTable;
 
   private static final Logger logger = CustomLogger.getLogger(DataFilter.class.getName(),
-      Level.INFO);
+      Level.FINE);
 
   public DataFilter(Database database, Consumer consumer, Producer producer) {
     this.database = database;
@@ -119,7 +119,8 @@ public class DataFilter implements Runnable {
             while (resultSet.next()) {
               int alertId = resultSet.getInt("alert_id");
 
-              //if (alertTimeTable.verifyAlert(alertId)) {
+              logger.log(Level.FINE, "Found alertId " + alertId);
+              if (alertTimeTable.verifyAlert(alertId)) {
                 Message message = new Message();
 
                 message.setAlertId(alertId);
@@ -136,7 +137,7 @@ public class DataFilter implements Runnable {
 
                 alerts.add(message);
                 databaseUpdateAlert(alertId);
-              //}
+              }
             }
           }
         }
