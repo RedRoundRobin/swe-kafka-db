@@ -28,7 +28,6 @@ public class DataFilter implements Runnable {
   private static final Logger logger = Logger.getLogger(DataFilter.class.getName());
 
   public DataFilter(Database database, Consumer consumer, Producer producer) {
-    logger.setLevel(Level.ALL);
     this.database = database;
     this.consumer = consumer;
     this.producer = producer;
@@ -59,7 +58,7 @@ public class DataFilter implements Runnable {
   }
 
   private Pair<Integer, String> databaseGetSensorLogicalIdAndType(int realDeviceId, int realSensorId, String gatewayName) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT sensor_id, type FROM sensors_devices_view WHERE real_device_id = ? AND real_sensor_id = ? AND g.name = ? LIMIT 1")) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT sensor_id, type FROM sensors_devices_view WHERE real_device_id = ? AND real_sensor_id = ? AND name = ? LIMIT 1")) {
       preparedStatement.setInt(1, realDeviceId);
       preparedStatement.setInt(2, realSensorId);
       preparedStatement.setString(3, gatewayName);
@@ -75,9 +74,9 @@ public class DataFilter implements Runnable {
   }
 
   private void databaseUpdateAlert(int alertId) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = NOW() WHERE alert_id = ? LIMIT 1")) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = NOW() WHERE alert_id = ?")) {
       preparedStatement.setInt(1, alertId);
-      preparedStatement.executeQuery();
+      preparedStatement.executeUpdate();
       connection.commit();
     }
   }
@@ -172,7 +171,7 @@ public class DataFilter implements Runnable {
     Gson gson = new Gson();
     while (true) {
       List<JsonObject> records = consumer.fetchMessages();
-      logger.log(Level.INFO, () -> records.size() + " created after TelegramUsers filter");
+      logger.log(Level.INFO, () -> records.size() + " kafka records received");
       /*
           Procedimento:
           - Chiamo il filterAlerts --> mi ritorna una lista di alerts filtrati e validi, senza gli utenti telegram
@@ -182,23 +181,25 @@ public class DataFilter implements Runnable {
           - La struttura List<Message> la inoltro con la formattazione automatica al producer Kafka
        */
 
-      try {
-        List<Message> messages = filterRealAlerts(records);
-        List<Message> finalMessages = messages;
-        logger.log(Level.INFO, () -> finalMessages.size() + " created after RealAlerts filter");
-        messages = filterTelegramUsers(messages);
-        List<Message> finalMessages1 = messages;
-        logger.log(Level.INFO, () -> finalMessages1.size() + " created after TelegramUsers filter");
-        String jsonMessages = gson.toJson(messages);
-        logger.info(jsonMessages);
-        if (!messages.isEmpty()) {
-          producer.executeProducer(topicName, jsonMessages);
-        }
+      if (records.size() > 0) {
+        try {
+          List<Message> messages = filterRealAlerts(records);
+          List<Message> finalMessages = messages;
+          logger.log(Level.INFO, () -> finalMessages.size() + " messages created after RealAlerts filter");
+          messages = filterTelegramUsers(messages);
+          List<Message> finalMessages1 = messages;
+          logger.log(Level.INFO, () -> finalMessages1.size() + " messages created after TelegramUsers filter");
+          String jsonMessages = gson.toJson(messages);
+          if (!messages.isEmpty()) {
+            logger.fine(jsonMessages);
+            producer.executeProducer(topicName, jsonMessages);
+          }
 
-      } catch (SQLException e) {
-        logger.log(Level.SEVERE, "SQL Exception occur!", e);
-      } catch (InterruptedException e) {
-        logger.log(Level.SEVERE, "Interrupted Exception occur!", e);
+        } catch (SQLException e) {
+          logger.log(Level.SEVERE, "SQL Exception occurs!", e);
+        } catch (InterruptedException e) {
+          logger.log(Level.SEVERE, "Interrupted Exception occur!", e);
+        }
       }
     }
   }

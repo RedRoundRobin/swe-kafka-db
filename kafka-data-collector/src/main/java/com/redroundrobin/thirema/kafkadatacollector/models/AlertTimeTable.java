@@ -25,6 +25,8 @@ public class AlertTimeTable {
         hashMap.remove(alertId);
         return true;
       }
+    } else {
+      return true;
     }
 
     hashMap.put(alertId, currentTimestamp);
