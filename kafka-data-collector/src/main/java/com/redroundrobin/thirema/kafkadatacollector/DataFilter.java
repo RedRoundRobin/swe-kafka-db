@@ -152,13 +152,16 @@ public class DataFilter implements Runnable {
       try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT user_id, telegram_chat FROM users WHERE deleted = false AND telegram_name IS NOT NULL AND telegram_chat IS NOT NULL AND entity_id= ?")) {
         preparedStatement.setInt(1, message.getEntityId());
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
+          List<String> telegramChatIds = new ArrayList<>();
           while (resultSet.next()) {
             if (!databaseCheckDisabledAlert(resultSet.getInt("user_id"), message.getAlertId())) {
-              telegramChats.add(message);
+              telegramChatIds.add(resultSet.getString("telegram_chat"));
             }
           }
+          message.setTelegramChatIds(telegramChatIds);
         }
       }
+      telegramChats.add(message);
     }
     return telegramChats;
   }
@@ -188,13 +191,11 @@ public class DataFilter implements Runnable {
       if (records.size() > 0) {
         try {
           List<Message> messages = filterRealAlerts(records);
-          List<Message> finalMessages = messages;
-          logger.log(Level.INFO, () -> finalMessages.size() + " messages created after RealAlerts filter");
-          messages = filterTelegramUsers(messages);
-          List<Message> finalMessages1 = messages;
-          logger.log(Level.INFO, () -> finalMessages1.size() + " messages created after TelegramUsers filter");
-          String jsonMessages = gson.toJson(messages);
-          if (!messages.isEmpty()) {
+          logger.log(Level.INFO, () -> messages.size() + " messages created after RealAlerts filter");
+          List<Message> finalMessages = filterTelegramUsers(messages);
+          logger.log(Level.INFO, () -> finalMessages.size() + " messages created after TelegramUsers filter");
+          if (!finalMessages.isEmpty()) {
+            String jsonMessages = gson.toJson(finalMessages);
             logger.fine(jsonMessages);
             producer.executeProducer(topicName, jsonMessages);
           }
