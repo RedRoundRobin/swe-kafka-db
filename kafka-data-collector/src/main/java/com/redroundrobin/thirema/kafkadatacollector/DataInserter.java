@@ -19,7 +19,7 @@ public class DataInserter implements Runnable {
   private final Consumer consumer;
 
   private static final Logger logger = CustomLogger.getLogger(DataInserter.class.getName(),
-      Level.FINEST);
+      Level.INFO);
 
   public DataInserter(Database database, Consumer consumer) {
     this.database = database;
