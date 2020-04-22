@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS sensors (
     real_sensor_id integer NOT NULL,
     real_device_id integer NOT NULL,
     gateway_name text NOT NULL,
-    value double precision NULL
+    value double precision NULL,
+	req_time timestamptz NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS alerts (

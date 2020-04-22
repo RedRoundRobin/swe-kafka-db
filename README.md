@@ -2,9 +2,9 @@
 
 # Apache Kafka e Database - ThiReMa
 
-:fire: Versione componente: `v0.2.0-dev` 
+:fire: Versione componente: `v0.2.1-dev` 
 
-:pushpin: Main repo: [swe-thirema](https://github.com/Maxelweb/swe-thirema)
+:pushpin: Main repo: [swe-thirema](https://github.com/RedRoundRobin/swe-thirema)
 
 ---
 
@@ -15,3 +15,7 @@
 ![Repository Checker](https://github.com/RedRoundRobin/swe-kafka-db/workflows/Repository%20Checker/badge.svg)
 
 ![Docker Checker](https://github.com/RedRoundRobin/swe-kafka-db/workflows/Docker%20Checker/badge.svg)
+
+### Comandi per i test
+
+`mvn clean package`

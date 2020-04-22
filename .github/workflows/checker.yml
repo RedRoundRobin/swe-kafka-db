@@ -25,13 +25,13 @@ jobs:
       with:
         java-version: 11
     - name: Run project checkstyle
-      run: mvn clean validate --file database-adapter/pom.xml
+      run: mvn clean validate --file kafka-data-collector/pom.xml
     - name: Run project build 
-      run: mvn clean compile --file database-adapter/pom.xml
+      run: mvn clean compile --file kafka-data-collector/pom.xml
     - name: Run project tests
-      run: mvn clean test --file database-adapter/pom.xml
+      run: mvn clean test --file kafka-data-collector/pom.xml
     - name: Run project SonarCloud
-      run: mvn clean verify -Dsonar.login=${{ secrets.SONARCLOUD_LOGIN_KEY }} --file database-adapter/pom.xml -e
+      run: mvn clean verify -Dsonar.login=${{ secrets.SONARCLOUD_LOGIN_KEY }} --file kafka-data-collector/pom.xml -e
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Slack Notification

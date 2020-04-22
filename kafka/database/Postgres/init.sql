@@ -13,8 +13,6 @@ CREATE TABLE IF NOT EXISTS entities (
   deleted boolean NOT NULL DEFAULT false
 );
 
-ALTER SEQUENCE entities_entity_id_seq INCREMENT 50 OWNED BY entities.entity_id;
-
 CREATE TABLE IF NOT EXISTS users (
   user_id serial PRIMARY KEY NOT NULL,
   name varchar(32) NOT NULL,
@@ -30,15 +28,11 @@ CREATE TABLE IF NOT EXISTS users (
   CONSTRAINT fk_entity FOREIGN KEY (entity_id) REFERENCES entities (entity_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-ALTER SEQUENCE users_user_id_seq INCREMENT 50 OWNED BY users.user_id;
-
 CREATE TABLE IF NOT EXISTS gateways (
   gateway_id serial PRIMARY KEY NOT NULL,
   name varchar(32) NOT NULL,
   last_sent timestamptz DEFAULT NULL
 );
-
-ALTER SEQUENCE gateways_gateway_id_seq INCREMENT 50 OWNED BY gateways.gateway_id;
 
 CREATE TABLE IF NOT EXISTS devices (
   device_id serial PRIMARY KEY NOT NULL,
@@ -50,8 +44,6 @@ CREATE TABLE IF NOT EXISTS devices (
   CONSTRAINT fk_gateway FOREIGN KEY (gateway_id) REFERENCES gateways (gateway_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-ALTER SEQUENCE devices_device_id_seq INCREMENT 50 OWNED BY devices.device_id;
-
 CREATE TABLE IF NOT EXISTS sensors (
   sensor_id serial PRIMARY KEY NOT NULL,
   real_sensor_id integer NOT NULL,
@@ -60,8 +52,6 @@ CREATE TABLE IF NOT EXISTS sensors (
   UNIQUE (device_id, real_sensor_id),
   CONSTRAINT fk_device FOREIGN KEY (device_id) REFERENCES devices (device_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
-
-ALTER SEQUENCE sensors_sensor_id_seq INCREMENT 50 OWNED BY sensors.sensor_id;
 
 CREATE TABLE IF NOT EXISTS entity_sensors (
   entity_id integer NOT NULL,
@@ -83,16 +73,12 @@ CREATE TABLE IF NOT EXISTS alerts (
   CONSTRAINT fk_entity FOREIGN KEY (entity_id) REFERENCES entities (entity_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-ALTER SEQUENCE alerts_alert_id_seq INCREMENT 50 OWNED BY alerts.alert_id;
-
 CREATE TABLE IF NOT EXISTS views (
   view_id serial PRIMARY KEY NOT NULL,
   name varchar(32) NOT NULL,
   user_id integer NOT NULL,
   CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-ALTER SEQUENCE views_view_id_seq INCREMENT 50 OWNED BY views.view_id;
 
 CREATE TABLE IF NOT EXISTS views_graphs (
   graph_id serial PRIMARY KEY NOT NULL,
@@ -105,8 +91,6 @@ CREATE TABLE IF NOT EXISTS views_graphs (
   CONSTRAINT fk_sensor2 FOREIGN KEY (sensor_2_id) REFERENCES sensors (sensor_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-ALTER SEQUENCE views_graphs_graph_id_seq INCREMENT 50 OWNED BY views_graphs.view_id;
-
 CREATE TABLE IF NOT EXISTS disabled_users_alerts (
   user_id integer NOT NULL,
   alert_id integer NOT NULL,
@@ -116,8 +100,18 @@ CREATE TABLE IF NOT EXISTS disabled_users_alerts (
 );
 
 
+ALTER SEQUENCE entities_entity_id_seq START WITH 100 RESTART WITH 100 MINVALUE 100 INCREMENT 25  OWNED BY entities.entity_id;
+ALTER SEQUENCE users_user_id_seq START WITH 100 RESTART WITH 100 MINVALUE 100 INCREMENT 25 OWNED BY users.user_id;
+ALTER SEQUENCE gateways_gateway_id_seq START WITH 100 RESTART WITH 100 MINVALUE 100 INCREMENT 25 OWNED BY gateways.gateway_id;
+ALTER SEQUENCE devices_device_id_seq START WITH 100 RESTART WITH 100 MINVALUE 100 INCREMENT 25 OWNED BY devices.device_id;
+ALTER SEQUENCE sensors_sensor_id_seq START WITH 100 RESTART WITH 100 MINVALUE 100 INCREMENT 25 OWNED BY sensors.sensor_id;
+ALTER SEQUENCE alerts_alert_id_seq START WITH 100 RESTART WITH 100 MINVALUE 100 INCREMENT 25 OWNED BY alerts.alert_id;
+ALTER SEQUENCE views_view_id_seq START WITH 100 RESTART WITH 100 MINVALUE 100 INCREMENT 25 OWNED BY views.view_id;
+ALTER SEQUENCE views_graphs_graph_id_seq START WITH 100 RESTART WITH 100 MINVALUE 100 INCREMENT 25 OWNED BY views_graphs.view_id;
+
+
 CREATE VIEW sensors_devices_view AS 
-SELECT s.device_id, real_device_id, sensor_id, real_sensor_id, type, g.gateway_id, g.name
+SELECT s.device_id, d.real_device_id, s.sensor_id, s.real_sensor_id, s.type, g.gateway_id, g.name
 FROM sensors s, devices d, gateways g
 WHERE s.device_id = d.device_id AND d.gateway_id = g.gateway_id;
 
