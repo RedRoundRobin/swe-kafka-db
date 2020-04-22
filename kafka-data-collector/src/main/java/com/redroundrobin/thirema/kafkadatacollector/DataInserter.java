@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +19,7 @@ public class DataInserter implements Runnable {
   private final Consumer consumer;
 
   private static final Logger logger = CustomLogger.getLogger(DataInserter.class.getName(),
-      Level.INFO);
+      Level.FINEST);
 
   public DataInserter(Database database, Consumer consumer) {
     this.database = database;
@@ -35,14 +34,12 @@ public class DataInserter implements Runnable {
         logger.log(Level.FINEST, jsonSensor::toString);
         try (Statement statement = c.createStatement()) {
           JsonObject sensor = jsonSensor.getAsJsonObject();
-          Timestamp reqTime = new Timestamp(sensor.get("timestamp").getAsLong());
-          Long reqTimeTz = reqTime.toLocalDateTime().toEpochSecond(ZoneOffset.UTC);
           String insert = "INSERT INTO sensors (real_sensor_id, real_device_id, gateway_name, value, req_time) VALUES ("
               + sensor.get("sensorId").getAsInt() + ","
               + record.get("deviceId").getAsInt() + ","
               + "'" + record.get("gateway").getAsString() + "'" + ","
               + sensor.get("data").getAsDouble() + ","
-              + "(SELECT to_timestamp(" + reqTimeTz + "))"
+              + "'" + new Timestamp(sensor.get("timestamp").getAsLong()).toString() + "'"
               + ");";
           logger.log(Level.FINEST, insert);
 
