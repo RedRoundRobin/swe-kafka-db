@@ -15,3 +15,7 @@
 ![Repository Checker](https://github.com/RedRoundRobin/swe-kafka-db/workflows/Repository%20Checker/badge.svg)
 
 ![Docker Checker](https://github.com/RedRoundRobin/swe-kafka-db/workflows/Docker%20Checker/badge.svg)
+
+### Comandi per i test
+
+`mvn clean package`
