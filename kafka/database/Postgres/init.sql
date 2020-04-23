@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS sensors (
   real_sensor_id integer NOT NULL,
   type varchar(32) NOT NULL,
   device_id integer,
+  cmd_enabled boolean NOT NULL DEFAULT false,
   UNIQUE (device_id, real_sensor_id),
   CONSTRAINT fk_device FOREIGN KEY (device_id) REFERENCES devices (device_id) ON DELETE SET NULL ON UPDATE CASCADE
 );
