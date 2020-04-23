@@ -1,4 +1,4 @@
 FROM adoptopenjdk/maven-openjdk11:latest
-COPY start.sh /usr/local/bin
-WORKDIR /usr/local/bin
+COPY . /usr/src/data-collector/tmp
+WORKDIR /usr/src/data-collector/tmp
 CMD ["sh", "start.sh"]

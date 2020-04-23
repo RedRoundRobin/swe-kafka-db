@@ -1,22 +1,17 @@
 #!/bin/sh
 
-if [ ! -f ../../../kafka-data-collector.jar ]; then
+if [ ! -f /usr/src/data-collector/kafka-data-collector.jar ]; then
 
-	cd ../../../kafka-data-collector
+	cd kafka-data-collector
 
 	mvn clean package
 
-	mv -f target/kafka-data-collector*dependencies.jar ../../../../kafka-data-collector.jar
-	cd ../../../
-	rm -rf ../../../kafka-data-collector
-	rm -rf ../../../.github
-	rm -rf ../../../kafka
-	rm -f ../../../.gitignore
-	rm -f ../../../LICENSE
-	rm -f ../../../README.md
+	mv -f target/kafka-data-collector*dependencies.jar ../../kafka-data-collector.jar
+	cd ../..
+	rm -rf tmp 
 	
 fi
 
-java -jar ../../../kafka-data-collector.jar
+java -jar /usr/src/data-collector/kafka-data-collector.jar
 
 echo "Kafka data collector started..."
