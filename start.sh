@@ -2,7 +2,7 @@
 
 if [ ! -f /usr/src/data-collector/kafka-data-collector.jar ]; then
 
-	cd kafka-data-collector
+	cd tmp/kafka-data-collector
 
 	mvn clean package
 
