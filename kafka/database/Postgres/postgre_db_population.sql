@@ -32,6 +32,8 @@ INSERT INTO "public"."entities" ("entity_id", "name", "location", "deleted") VAL
 
 -- Administrator Users
 insert into users (user_id, name, surname, email, password, type) values (1, 'Andrea', 'Simion', 'admin@admin.it', 'admin', 2);
+insert into users (user_id, name, surname, email, password, type, telegram_name) values (10, 'Mariano', 'Simion', 'admin2@admin2.it', 'admin2', 2, 'Maxelweb');
+insert into users (user_id, name, surname, email, password, type, telegram_name) values (11, 'Giovanni', 'Simion', 'admin3@admin3.it', 'admin3', 2, 'giovannividotto');
 
 -- Pulp Company users
 insert into users (user_id, name, surname, email, password, type, entity_id) values (2, 'Jules', 'Winnfield', 'mario@rossi.it', 'mariorossi', 0, 1);
