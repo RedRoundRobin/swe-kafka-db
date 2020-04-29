@@ -23,7 +23,7 @@ INSERT INTO "public"."sensors" ("sensor_id", "real_sensor_id", "type", "device_i
 -- Coffee Machine 2 Sensors
 INSERT INTO "public"."sensors" ("sensor_id", "real_sensor_id", "type", "device_id") VALUES ('7', '1', 'espresso', '4');
 INSERT INTO "public"."sensors" ("sensor_id", "real_sensor_id", "type", "device_id") VALUES ('8', '2', 'capuccino', '4');
-INSERT INTO "public"."sensors" ("sensor_id", "real_sensor_id", "type", "device_id") VALUES ('9', '3', 'temperatura_interna', '4');
+INSERT INTO "public"."sensors" ("sensor_id", "real_sensor_id", "type", "device_id", "cmd_enabled") VALUES ('9', '3', 'temperatura_interna', '4', 'true');
 
 
 -- Companies / Entities
