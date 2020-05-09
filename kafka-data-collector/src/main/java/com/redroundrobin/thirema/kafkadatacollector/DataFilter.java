@@ -189,7 +189,7 @@ public class DataFilter implements Runnable {
           - La struttura List<Message> la inoltro con la formattazione automatica al producer Kafka
        */
 
-      if (records.isEmpty()) {
+      if (!records.isEmpty()) {
         try {
           List<Message> messages = filterRealAlerts(records);
           logger.log(Level.INFO, () -> messages.size() + " messages created after RealAlerts filter");
