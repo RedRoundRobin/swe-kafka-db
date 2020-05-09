@@ -119,7 +119,7 @@ public class DataFilter implements Runnable {
             while (resultSet.next()) {
               int alertId = resultSet.getInt("alert_id");
 
-              logger.log(Level.FINE, "Found alertId " + alertId);
+              logger.log(Level.FINE, () -> "Found alertId " + alertId);
               if (alertTimeTable.verifyAlert(alertId)) {
                 Message message = new Message();
 
@@ -189,7 +189,7 @@ public class DataFilter implements Runnable {
           - La struttura List<Message> la inoltro con la formattazione automatica al producer Kafka
        */
 
-      if (records.size() > 0) {
+      if (records.isEmpty()) {
         try {
           List<Message> messages = filterRealAlerts(records);
           logger.log(Level.INFO, () -> messages.size() + " messages created after RealAlerts filter");
