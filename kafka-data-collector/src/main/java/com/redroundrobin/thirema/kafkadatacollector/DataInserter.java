@@ -66,7 +66,7 @@ public class DataInserter implements Runnable {
       List<JsonObject> records = consumer.fetchMessages();
       logger.log(Level.INFO, () -> records.size() + " kafka records received");
 
-      if (records.isEmpty()) {
+      if (!records.isEmpty()) {
         this.sinkData(connection, records);
       }
     }
