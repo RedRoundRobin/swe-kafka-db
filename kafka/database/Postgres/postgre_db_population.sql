@@ -31,9 +31,9 @@ INSERT INTO "public"."entities" ("entity_id", "name", "location", "deleted") VAL
 INSERT INTO "public"."entities" ("entity_id", "name", "location", "deleted") VALUES ('2', 'Coffee Company', 'Germania', 'false');
 
 -- Administrator Users
-insert into users (user_id, name, surname, email, password, type) values (1, 'Andrea', 'Simion', 'admin@admin.it', 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec', 2); -- psw: admin
-insert into users (user_id, name, surname, email, password, type, telegram_name) values (10, 'Mariano', 'Simion', 'admin2@admin2.it', '661bb43140229ad4dc3e762e7bdd68cc14bb9093c158c386bd989fea807acd9bd7f805ca4736b870b6571594d0d8fcfc57b98431143dfb770e083fa9be89bc72', 2, 'Maxelweb'); -- psw: admin2
-insert into users (user_id, name, surname, email, password, type, telegram_name) values (11, 'Giovanni', 'Simion', 'admin3@admin3.it', '448d8ca07486257065add370c87e61a3c778c70d4fcb5db89f011ade315e7a942fb3352e6bded66c4f9adef6f3314588ace81aa12096111ee306fa5ed4294182', 2, 'giovannividotto'); -- psw: admin3
+insert into users (user_id, name, surname, email, password, type) values (1, 'Admin', 'System', 'admin@admin.it', 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec', 2); -- psw: admin
+insert into users (user_id, name, surname, email, password, type, telegram_name) values (10, 'Mariano', 'Rossi', 'admin2@admin2.it', '661bb43140229ad4dc3e762e7bdd68cc14bb9093c158c386bd989fea807acd9bd7f805ca4736b870b6571594d0d8fcfc57b98431143dfb770e083fa9be89bc72', 2, 'Maxelweb'); -- psw: admin2
+insert into users (user_id, name, surname, email, password, type, telegram_name) values (11, 'Giovanni', 'Verdi', 'admin3@admin3.it', '448d8ca07486257065add370c87e61a3c778c70d4fcb5db89f011ade315e7a942fb3352e6bded66c4f9adef6f3314588ace81aa12096111ee306fa5ed4294182', 2, 'giovannividotto'); -- psw: admin3
 
 -- Pulp Company users
 insert into users (user_id, name, surname, email, password, type, entity_id) values (2, 'Jules', 'Winnfield', 'mario@rossi.it', '7856873f653b390afec6c83a6fc8a47de054a6c19effd4e81bc4c1383ed2eed576f272e90517da5c563e8ba79f6470a305788fc091af6db822f239850ee97db8', 0, 1);  -- psw: mariorossi
