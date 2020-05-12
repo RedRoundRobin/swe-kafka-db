@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS gateways (
   gateway_id serial PRIMARY KEY NOT NULL,
-  name varchar(32) NOT NULL,
+  name varchar(32) NOT NULL UNIQUE,
   last_sent timestamptz DEFAULT NULL
 );
 
