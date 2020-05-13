@@ -14,13 +14,6 @@ CREATE TABLE IF NOT EXISTS sensors (
 	req_time timestamptz NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS alerts (
-    time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
-    real_sensor_id integer NOT NULL,
-    real_device_id integer NOT NULL,
-    gateway_name text NOT NULL,
-    value double precision NOT NULL
-);
 
 CREATE TABLE IF NOT EXISTS logs (
     time timestamptz PRIMARY KEY DEFAULT CURRENT_TIMESTAMP,
@@ -31,7 +24,5 @@ CREATE TABLE IF NOT EXISTS logs (
 );
 
 SELECT create_hypertable('sensors', 'time');
-
-SELECT create_hypertable('alerts', 'time');
 
 SELECT create_hypertable('logs', 'time');

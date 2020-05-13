@@ -138,9 +138,9 @@ public class CustomLogger extends Logger {
     }
 
     private String calcDate(long millisecs) {
-      SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       Date resultdate = new Date(millisecs);
-      return date_format.format(resultdate);
+      return dateFormat.format(resultdate);
     }
   }
 }

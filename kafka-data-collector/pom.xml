@@ -6,7 +6,7 @@
 
     <groupId>com.redroundrobin.kafkadatacollector</groupId>
     <artifactId>kafka-data-collector</artifactId>
-    <version>v0.2.0-dev</version>
+    <version>v1.0.0-rc</version>
 
     <properties>
         <java.version>11</java.version>
@@ -84,21 +84,7 @@
                     <release>11</release>
                 </configuration>
             </plugin>
-<!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.redroundrobin.thirema.kafkadatacollector.KafkaDataCollectorApp</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
--->
+
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>

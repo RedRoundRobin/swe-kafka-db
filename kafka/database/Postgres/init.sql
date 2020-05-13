@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS gateways (
   gateway_id serial PRIMARY KEY NOT NULL,
-  name varchar(32) NOT NULL,
+  name varchar(32) NOT NULL UNIQUE,
   last_sent timestamptz DEFAULT NULL
 );
 
@@ -49,8 +49,9 @@ CREATE TABLE IF NOT EXISTS sensors (
   real_sensor_id integer NOT NULL,
   type varchar(32) NOT NULL,
   device_id integer,
+  cmd_enabled boolean NOT NULL DEFAULT false,
   UNIQUE (device_id, real_sensor_id),
-  CONSTRAINT fk_device FOREIGN KEY (device_id) REFERENCES devices (device_id) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT fk_device FOREIGN KEY (device_id) REFERENCES devices (device_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS entity_sensors (
@@ -86,9 +87,9 @@ CREATE TABLE IF NOT EXISTS views_graphs (
   view_id integer,
   sensor_1_id integer,
   sensor_2_id integer,
-  CONSTRAINT fk_view FOREIGN KEY (view_id) REFERENCES views (view_id) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT fk_sensor1 FOREIGN KEY (sensor_1_id) REFERENCES sensors (sensor_id) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT fk_sensor2 FOREIGN KEY (sensor_2_id) REFERENCES sensors (sensor_id) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT fk_view FOREIGN KEY (view_id) REFERENCES views (view_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_sensor1 FOREIGN KEY (sensor_1_id) REFERENCES sensors (sensor_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_sensor2 FOREIGN KEY (sensor_2_id) REFERENCES sensors (sensor_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS disabled_users_alerts (
