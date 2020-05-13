@@ -6,7 +6,7 @@
 
     <groupId>com.redroundrobin.kafkadatacollector</groupId>
     <artifactId>kafka-data-collector</artifactId>
-    <version>v0.2.0-dev</version>
+    <version>v1.0.0-rc</version>
 
     <properties>
         <java.version>11</java.version>
