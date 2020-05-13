@@ -2,7 +2,7 @@
 
 # Apache Kafka e Database - ThiReMa
 
-:fire: Versione componente: `v0.2.1-dev` 
+:fire: Versione componente: `v1.0.0-rc` 
 
 :pushpin: Main repo: [swe-thirema](https://github.com/RedRoundRobin/swe-thirema)
 
