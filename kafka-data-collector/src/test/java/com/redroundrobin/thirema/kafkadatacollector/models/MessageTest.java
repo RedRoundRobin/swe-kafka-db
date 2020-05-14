@@ -40,6 +40,18 @@ public class MessageTest {
   }
 
   @Test
+  public void getDeviceId() {
+    message.setDeviceId(1);
+    assertEquals(1, message.getDeviceId());
+  }
+
+  @Test
+  public void getDeviceName() {
+    message.setDeviceName("name");
+    assertEquals("name", message.getDeviceName());
+  }
+
+  @Test
   public void getRealDeviceId() {
     message.setRealDeviceId(1);
     assertEquals(1, message.getRealDeviceId());
