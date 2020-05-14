@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Message implements Serializable {
   private String reqType;
-  private transient int alertId;
+  private int alertId;
   private transient int entityId;
   private String sensorType;
   private int deviceId;
