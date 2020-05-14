@@ -83,7 +83,7 @@ public class DataFilter implements Runnable {
   }
 
   private void databaseUpdateAlert(int alertId) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = NOW() WHERE alert_id = ?")) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = current_timestamp WHERE alert_id = ?")) {
       preparedStatement.setInt(1, alertId);
       preparedStatement.executeUpdate();
       connection.commit();
@@ -114,7 +114,7 @@ public class DataFilter implements Runnable {
         Map<String, Object> sensorData = databaseGetSensorLogicalIdAndType(realDeviceId, realSensorId, gatewayName);
         int sensorValue = sensor.get("data").getAsInt();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts WHERE (sensor_id = ? AND deleted = false AND ((last_sent < (NOW() - INTERVAL '10 minutes')) OR (last_sent IS NULL))) AND ((type = 0 AND ? > threshold) OR (type = 1 AND ? < threshold) OR (type = 2 AND ? = threshold)) ")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts WHERE (sensor_id = ? AND deleted = false AND ((last_sent < (current_timestamp - INTERVAL '10 minutes')) OR (last_sent IS NULL))) AND ((type = 0 AND ? > threshold) OR (type = 1 AND ? < threshold) OR (type = 2 AND ? = threshold)) ")) {
           preparedStatement.setInt(1, (int)sensorData.get("sensor_id"));
           preparedStatement.setInt(2, sensorValue);
           preparedStatement.setInt(3, sensorValue);
