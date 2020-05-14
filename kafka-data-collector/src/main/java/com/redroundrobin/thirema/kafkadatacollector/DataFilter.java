@@ -132,7 +132,7 @@ public class DataFilter implements Runnable {
                 message.setEntityId(resultSet.getInt("entity_id"));
                 message.setSensorType((String)sensorData.get("type"));
                 message.setDeviceId((int)sensorData.get("device_id"));
-                message.setDeviceName((String)sensorData.get("type"));
+                message.setDeviceName((String)sensorData.get("device_name"));
                 message.setRealDeviceId(realDeviceId);
                 message.setRealSensorId(realSensorId);
                 message.setCurrentThreshold(resultSet.getInt("threshold"));
