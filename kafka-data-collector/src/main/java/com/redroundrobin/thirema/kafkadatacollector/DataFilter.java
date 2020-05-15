@@ -14,7 +14,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.util.Pair;
@@ -61,24 +63,27 @@ public class DataFilter implements Runnable {
     }
   }
 
-  private Pair<Integer, String> databaseGetSensorLogicalIdAndType(int realDeviceId, int realSensorId, String gatewayName) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT sensor_id, type FROM sensors_devices_view WHERE real_device_id = ? AND real_sensor_id = ? AND name = ? LIMIT 1")) {
+  private Map<String, Object> databaseGetSensorLogicalIdAndType(int realDeviceId, int realSensorId, String gatewayName) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT SDV.device_id, D.name AS device_name, SDV.sensor_id, SDV.type FROM sensors_devices_view SDV JOIN devices D ON SDV.device_id = D.device_id WHERE SDV.real_device_id = ? AND SDV.real_sensor_id = ? AND SDV.name = ? LIMIT 1")) {
       preparedStatement.setInt(1, realDeviceId);
       preparedStatement.setInt(2, realSensorId);
       preparedStatement.setString(3, gatewayName);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         resultSet.next();
 
-        int logicalSensorId = resultSet.getInt("sensor_id");
-        String sensorType = resultSet.getString("type");
+        Map<String, Object> row = new HashMap<>();
+        row.put("device_id", resultSet.getInt("device_id"));
+        row.put("device_name", resultSet.getString("device_name"));
+        row.put("sensor_id", resultSet.getInt("sensor_id"));
+        row.put("type", resultSet.getString("type"));
 
-        return new Pair<>(logicalSensorId, sensorType);
+        return row;
       }
     }
   }
 
   private void databaseUpdateAlert(int alertId) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = NOW() WHERE alert_id = ?")) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE alerts SET last_sent = clock_timestamp() WHERE alert_id = ?")) {
       preparedStatement.setInt(1, alertId);
       preparedStatement.executeUpdate();
       connection.commit();
@@ -106,11 +111,11 @@ public class DataFilter implements Runnable {
           continue;
         }
 
-        Pair<Integer, String> sensorData = databaseGetSensorLogicalIdAndType(realDeviceId, realSensorId, gatewayName);
+        Map<String, Object> sensorData = databaseGetSensorLogicalIdAndType(realDeviceId, realSensorId, gatewayName);
         int sensorValue = sensor.get("data").getAsInt();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts WHERE (sensor_id = ? AND deleted = false AND ((last_sent < (NOW() - '10 minutes'::interval)) OR (last_sent IS NULL))) AND ((type = 0 AND ? > threshold) OR (type = 1 AND ? < threshold) OR (type = 2 AND ? = threshold)) ")) {
-          preparedStatement.setInt(1, sensorData.getKey());
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM alerts WHERE (sensor_id = ? AND deleted = false AND ((last_sent < (clock_timestamp() - INTERVAL '10 minutes')) OR (last_sent IS NULL))) AND ((type = 0 AND ? > threshold) OR (type = 1 AND ? < threshold) OR (type = 2 AND ? = threshold))")) {
+          preparedStatement.setInt(1, (int)sensorData.get("sensor_id"));
           preparedStatement.setInt(2, sensorValue);
           preparedStatement.setInt(3, sensorValue);
           preparedStatement.setInt(4, sensorValue);
@@ -125,7 +130,9 @@ public class DataFilter implements Runnable {
 
                 message.setAlertId(alertId);
                 message.setEntityId(resultSet.getInt("entity_id"));
-                message.setSensorType(sensorData.getValue());
+                message.setSensorType((String)sensorData.get("type"));
+                message.setDeviceId((int)sensorData.get("device_id"));
+                message.setDeviceName((String)sensorData.get("device_name"));
                 message.setRealDeviceId(realDeviceId);
                 message.setRealSensorId(realSensorId);
                 message.setCurrentThreshold(resultSet.getInt("threshold"));

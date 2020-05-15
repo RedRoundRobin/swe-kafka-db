@@ -5,9 +5,11 @@ import java.util.List;
 
 public class Message implements Serializable {
   private String reqType;
-  private transient int alertId;
+  private int alertId;
   private transient int entityId;
   private String sensorType;
+  private int deviceId;
+  private String deviceName;
   private int realDeviceId;
   private int realSensorId;
   private String realGatewayName;
@@ -34,6 +36,14 @@ public class Message implements Serializable {
 
   public String getSensorType() {
     return sensorType;
+  }
+
+  public int getDeviceId() {
+    return deviceId;
+  }
+
+  public String getDeviceName() {
+    return deviceName;
   }
 
   public int getRealDeviceId() {
@@ -106,5 +116,13 @@ public class Message implements Serializable {
 
   public void setTelegramChatIds(List<String> telegramChatIds) {
     this.telegramChatIds = telegramChatIds;
+  }
+
+  public void setDeviceId(int deviceId) {
+    this.deviceId = deviceId;
+  }
+
+  public void setDeviceName(String deviceName) {
+    this.deviceName = deviceName;
   }
 }
