@@ -55,7 +55,7 @@ insert into users (user_id, name, surname, email, password, type, entity_id, tel
 insert into users (user_id, name, surname, email, password, type, entity_id) values (6, 'Mia', 'Wallace', 'mod@mod.it', 'fd2d1f62aab380a798f7a2daf73e8aca617ddbe13da858609939d7420769d3398000e5463a9ab995ff8d0c48c2a1b64bb71db0528cc5adea40abb5bf9cd1a62a', 1, 1);  -- psw: mod
 
 -- Coffee Company users
-insert into users (user_id, name, surname, email, password, type, entity_id) values (7, 'Donald', 'Trump', 'mod2@mod2.it', '3243878e639e400978908a6673112c3e7c9e6ea2d7e4b483a60025e90118d2be2939f047728995ba510b151d3c7e29f3636602ad039b570ea568553910578264', 1, 2); -- psw: mod2
+insert into users (user_id, name, surname, email, password, type, entity_id) values (7, 'Quentin', 'Tarantino', 'mod2@mod2.it', '3243878e639e400978908a6673112c3e7c9e6ea2d7e4b483a60025e90118d2be2939f047728995ba510b151d3c7e29f3636602ad039b570ea568553910578264', 1, 2); -- psw: mod2
 insert into users (user_id, name, surname, email, password, type, entity_id) values (8, 'Shane', 'Harrhy', 'sharrhy6@acquirethisname.com', '219aab6b2cf738d9f370e197ce0151be42ae6095e0d72fa49592865c9d2dde5d2fa72e908ac374cba55426e6d0ed39324fd6de1d5da2641cc7f4491f5edd931f', 0, 2); -- psw: password8
 insert into users (user_id, name, surname, email, password, type, entity_id) values (9, 'Drucie', 'Stronach', 'dstronach7@berkeley.edu', '219aab6b2cf738d9f370e197ce0151be42ae6095e0d72fa49592865c9d2dde5d2fa72e908ac374cba55426e6d0ed39324fd6de1d5da2641cc7f4491f5edd931f', 0, 2);  -- psw: password8
 
